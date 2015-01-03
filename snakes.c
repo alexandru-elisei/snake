@@ -175,11 +175,7 @@ static void snk_update()
 		return;
 	}
 
-	/* Verific daca sarpele nu intra in coliziune cu el insusi */
-	if (is_incolision(&new_snake[snk_n - 1]) == 1) {
-		snk_dead();
-		return;
-	}
+	
 
 	/* Daca am apasat o tasta si noua directie nu corespunde cu cea veche
 	 * inseamna ca am un punct de intoarcere */
@@ -202,6 +198,12 @@ static void snk_update()
 		muta_punct(&new_snake[i], next_dir);	
 	}
 
+	/* Verific daca sarpele nu intra in coliziune cu el insusi */
+	if (is_incolision(new_snake) == 1) {
+		snk_dead();
+		return;
+	}	
+
 	/***************************************************/
 	/*
 	fprintf(f, "%s", "snk_update - dupa ce am mutat sarpele new_snake\n");
@@ -212,7 +214,6 @@ static void snk_update()
 	fflush(f);
 	*/
 	/***************************************************/
-
 
 	/* Sterg primul punct de intoarcere, noul sarpe deja a trecut de el
 	 * complet */
@@ -252,8 +253,8 @@ static int is_incolision(struct Unit *p)
 {
 	int i;
 
-	for (i = 0; i < snk_n; i++)
-		if (p->x == snake[i].x && p->y == snake[i].y)
+	for (i = 0; i < snk_n - 1; i++)
+		if (p->x == p[snk_n - 1].x && p->y == p[snk_n - 1].y)
 			return 1;
 
 	return 0;
