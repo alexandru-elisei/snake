@@ -1,0 +1,7 @@
+Programarea Calculatoarelor, seria CC
+Tema2 - Snake
+
+snake.c coincide cu snake1.c aflat în dosarul exemple
+
+Pentru compilare: make
+Pentru rulare: make run
