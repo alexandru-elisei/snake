@@ -1,8 +1,8 @@
 # Programarea Calculatoarelor, seria CC
 # Tema2 - Snake
 
-CC = gcc
-FLAGS = -Wall -lncurses -g
+CC = gcc-4.9
+FLAGS = -Wall -lncurses -g -fdiagnostics-color=auto
 PROG = snake
 HEADER = 	generic.h		\
 	 	graphics.h		\
