@@ -8,7 +8,7 @@
 void snk_init();
 
 /* In snakes.c */
-void snk_addmv();
+void snk_addmv(char dir);
 
 /* In snakes.c */
 int snk_isdir(char c);
