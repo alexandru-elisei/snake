@@ -130,12 +130,22 @@ void gph_drwsnk(struct Unit *snake, int snk_n)
 
 	gph_drwborder();
 
+	/* Setez culoarea verde pentru snake */
+	/*
+	init_pair(1, COLOR_GREEN, COLOR_BLACK);
+	wattron(bwin, COLOR_PAIR(1));
+	*/
+
 	for (i = 0; i < snk_n; i++) {
 		mvwprintw(bwin,
 			snake[i].y,
 			snake[i].x,
 			"%c", '*');
 	}
+
+	/* O opresc */
+	//wattroff(bwin, COLOR_PAIR(1));
+	/* Desenez schimbarile pe ecran */
 	wrefresh(bwin);
 }
 
