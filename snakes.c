@@ -33,7 +33,7 @@ static void del_tp();
 static void creeaza_sarpe();
 static int get_intp(struct Unit *p);
 static int coord_egale(struct Unit *u1, struct Unit *u2);
-static void muta_unitate(struct Unit *p, char dir);
+static void muta_unitate(struct Unit *u, char dir);
 static void snk_update();
 
 /* Aici trebuie sa inceapa sa se miste sarpele */
@@ -57,7 +57,7 @@ void snk_init()
 	next_dir = 0;
 
 	/* Anunt programul ca incep sa ma joc */
-	flag_add("play", 1);
+	flag_add("playing", 1);
 	/* Sanity check */
 	flag_del("dead");
 
@@ -108,7 +108,7 @@ int snk_isdir(char c)
 void snk_reset()
 {
 	/* Nu mai ma joc */
-	flag_del("play");
+	flag_del("playing");
 
 	/* Distrug sarpele */
 	snk_n = 0;
@@ -283,16 +283,16 @@ static void adauga_tp(int x, int y, char dir)
 }
 
 /* Aloca memorie pentru vectori de tip Unit */
-static void aloca_mem(struct Unit **p, int *mem)
+static void aloca_mem(struct Unit **u, int *mem)
 {
 	if (*mem == 0)
-		*p = (struct Unit *) malloc((*mem + MEM_INC) *
+		*u = (struct Unit *) malloc((*mem + MEM_INC) *
 				sizeof(struct Unit));
 	else
-		*p = (struct Unit *) realloc(*p,
+		*u = (struct Unit *) realloc(*u,
 				(*mem + MEM_INC) * sizeof(struct Unit));
 		
-	if (*p == NULL) {
+	if (*u == NULL) {
 		flag_add("fatal_error", 1);
 		return;
 	}
@@ -333,24 +333,24 @@ static void creeaza_sarpe()
 }
 
 /* Muta un punct in directia indicata */
-static void muta_unitate(struct Unit *p, char dir)
+static void muta_unitate(struct Unit *u, char dir)
 {
 	switch (dir) {
 		case UP:
-			--(p->y);
+			--(u->y);
 			break;
 		case DOWN:
-			++(p->y);
+			++(u->y);
 			break;
 		case LEFT:
-			--(p->x);
+			--(u->x);
 			break;
 		case RIGHT:
-			++(p->x);
+			++(u->x);
 			break;
 	}
 
-	p->direction = dir;
+	u->direction = dir;
 }
 
 /* Sterge primul element al vectorului de puncte de intoarcere */
