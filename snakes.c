@@ -32,7 +32,7 @@ static void del_tp();
 static void creeaza_sarpe();
 static int get_intp(struct Unit *p);
 static int is_incolision(struct Unit *p);
-static void muta_punct(struct Unit *p, char dir);
+static void muta_unitate(struct Unit *p, char dir);
 static void snk_update();
 
 /* Aici trebuie sa inceapa sa se miste sarpele */
@@ -165,9 +165,9 @@ static void snk_update()
 	/***************************************************/
 
 	if (next_dir != 0)
-		muta_punct(&new_snake[snk_n - 1], next_dir);
+		muta_unitate(&new_snake[snk_n - 1], next_dir);
 	else
-		muta_punct(&new_snake[snk_n - 1], snake[snk_n - 1].direction);
+		muta_unitate(&new_snake[snk_n - 1], snake[snk_n - 1].direction);
 
 	/* Verific daca urmatoarea pozitie e pe chenar */
 	if (gph_is_onborder(&new_snake[snk_n - 1]) == 1) {
@@ -195,7 +195,7 @@ static void snk_update()
 			next_dir = snake[i].direction;	
 
 		/* Mut segmentul curent al sarpelui */
-		muta_punct(&new_snake[i], next_dir);	
+		muta_unitate(&new_snake[i], next_dir);	
 	}
 
 	/* Verific daca sarpele nu intra in coliziune cu el insusi */
@@ -324,7 +324,7 @@ static void creeaza_sarpe()
 }
 
 /* Muta un punct in directia indicata */
-static void muta_punct(struct Unit *p, char dir)
+static void muta_unitate(struct Unit *p, char dir)
 {
 	switch (dir) {
 		case UP:
