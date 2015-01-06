@@ -13,13 +13,13 @@
 
 
 static struct Unit *snake;	/* sarpele, duh */
-static struct Unit *tp;		/* punctele de intoarcere */
+static struct Unit *turns;	/* punctele de intoarcere */
 /* Directia in care se va misca sarpele la urmatoarea actualizare a ecranului */
 static char next_dir;
-static int snk_n, tp_n;		/* lungimile curente ale sarpelui si ale
+static int snk_n, trn_n;	/* lungimile curente ale sarpelui si ale
 				 * vectorului de puncte de intoarcere */
 static int snk_mem;		/* memoria alocata curent sarpelui */
-static int tp_mem;		/* memoria alocata curent tp */
+static int trn_mem;		/* memoria alocata curent lui turns */
 
 /******************************************************/
 static FILE *f;
@@ -28,10 +28,10 @@ static FILE *f;
 
 /* Antet functii locale/private */
 static void aloca_mem(struct Unit **p, int *mem);
-static void adauga_tp(int x, int y, char dir);
-static void del_tp();
+static void adauga_trn(int x, int y, char dir);
+static void del_trn();
 static void creeaza_sarpe();
-static int get_intp(struct Unit *p);
+static int get_intrn(struct Unit *p);
 static int coord_egale(struct Unit *u1, struct Unit *u2);
 static void muta_unitate(struct Unit *u, char dir);
 static void snk_update();
@@ -45,9 +45,9 @@ void snk_init()
 		return;
 	}
 
-	tp_n = 0;
-	tp_mem = 0;
-	aloca_mem(&tp, &tp_mem);
+	trn_n = 0;
+	trn_mem = 0;
+	aloca_mem(&turns, &trn_mem);
 
 	/* La pornirea jocului sarpele se misca pe orizontala spre dreapta
 	 * incepand cu mijlocul chenarului */
@@ -116,9 +116,9 @@ void snk_reset()
 	free(snake);
 
 	/* Distrug punctele de intoarcere */
-	tp_n = 0;
-	tp_mem = 0;
-	free(tp);
+	trn_n = 0;
+	trn_mem = 0;
+	free(turns);
 
 	/* Nu mai ma misc */
 	next_dir = 0;
@@ -146,7 +146,7 @@ void snk_dead()
 static void snk_update()
 {
 	struct Unit new_snake[snk_n];	/* noua pozitie a sarpelui */
-	int index_tp;
+	int index_trn;
 	int i;
 	FILE *f;
 
@@ -181,16 +181,16 @@ static void snk_update()
 	/* Daca am apasat o tasta si noua directie nu corespunde cu cea veche
 	 * inseamna ca am un punct de intoarcere */
 	if (next_dir != 0 && snake[snk_n - 1].direction != next_dir)
-		adauga_tp(snake[snk_n - 1].x, snake[snk_n - 1].y,
+		adauga_trn(snake[snk_n - 1].x, snake[snk_n - 1].y,
 			       next_dir);
 
 	/* Mut sarpele */
 	for (i = snk_n - 2; i >= 0; i--) {
 		/* Daca un segment al sarpelui se afla pe un punct de 
 		 * intoarcere */
-		index_tp = get_intp(&snake[i]);
-		if (index_tp != -1)
-			next_dir = tp[index_tp].direction;
+		index_trn = get_intrn(&snake[i]);
+		if (index_trn != -1)
+			next_dir = turns[index_trn].direction;
 		/* Daca nu se afla, nu isi va schimba directia */
 		else
 			next_dir = snake[i].direction;	
@@ -218,8 +218,8 @@ static void snk_update()
 
 	/* Sterg primul punct de intoarcere, noul sarpe deja a trecut de el
 	 * complet */
-	if (tp_n > 0 && snake[0].x == tp[0].x && snake[0].y == tp[0].y )
-		del_tp();
+	if (trn_n > 0 && snake[0].x == turns[0].x && snake[0].y == turns[0].y )
+		del_trn();
 
 	/* Copiez noul sarpe in cel vechi */
 	for (i = 0; i < snk_n; i++)
@@ -235,15 +235,15 @@ static void snk_update()
 }
 
 /* Verifica daca o unitate a sarpelui este punct de intoarcere */
-static int get_intp(struct Unit *p)
+static int get_intrn(struct Unit *p)
 {
 	int i;
 
-	if (tp_n == 0)
+	if (trn_n == 0)
 		return -1;
 
-	for (i = 0; i < tp_n; i++)
-		if (p->x == tp[i].x && p->y == tp[i].y)
+	for (i = 0; i < trn_n; i++)
+		if (p->x == turns[i].x && p->y == turns[i].y)
 			return i;
 
 	return -1;
@@ -271,15 +271,15 @@ int snk_is_incolision(struct Unit *u,		/* pointer catre un element */
 
 /* Adauga un punct de intoarcere, adica un punct unde sarpele isi schimba
  * directia de miscare */
-static void adauga_tp(int x, int y, char dir)
+static void adauga_trn(int x, int y, char dir)
 {
-	if (tp_n == tp_mem)
-		aloca_mem(&tp, &tp_mem);
+	if (trn_n == trn_mem)
+		aloca_mem(&turns, &trn_mem);
 
-	tp[tp_n].x = x;
-	tp[tp_n].y = y;
-	tp[tp_n].direction = dir;
-	++tp_n;
+	turns[trn_n].x = x;
+	turns[trn_n].y = y;
+	turns[trn_n].direction = dir;
+	++trn_n;
 }
 
 /* Aloca memorie pentru vectori de tip Unit */
@@ -354,14 +354,14 @@ static void muta_unitate(struct Unit *u, char dir)
 }
 
 /* Sterge primul element al vectorului de puncte de intoarcere */
-static void del_tp()
+static void del_trn()
 {
 	int i;
 
-	for (i = 1; i < tp_n; i++)
-		tp[i - 1] = tp[i];
+	for (i = 1; i < trn_n; i++)
+		turns[i - 1] = turns[i];
 
-	--tp_n;
+	--trn_n;
 }
 
 /* Verifica daca doua unitati, trimise ca pointer, au aceleasi coordonate */
