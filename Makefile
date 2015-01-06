@@ -6,11 +6,11 @@ FLAGS = -Wall -lncurses -g
 PROG = snake
 HEADER = 	generic.h		\
 	 	graphics.h		\
+	 	snakes.h		\
 		flags.h
 
 SOURCES = 	$(HEADER:%.h=%.c)	\
-		main.c			\
-		snakes.c		
+		main.c			
 OBJS = $(SOURCES:%.c=%.o)
 
 
