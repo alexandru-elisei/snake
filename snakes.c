@@ -7,6 +7,7 @@
 #include "flags.h"
 #include "generic.h"
 #include "graphics.h"
+#include "snakes.h"
 
 #define START_LENGTH	8	/* lungimea initiala a sarpelui */
 
@@ -31,7 +32,7 @@ static void adauga_tp(int x, int y, char dir);
 static void del_tp();
 static void creeaza_sarpe();
 static int get_intp(struct Unit *p);
-static int is_incolision(struct Unit *p);
+static int coord_egale(struct Unit *u1, struct Unit *u2);
 static void muta_unitate(struct Unit *p, char dir);
 static void snk_update();
 
@@ -199,7 +200,7 @@ static void snk_update()
 	}
 
 	/* Verific daca sarpele nu intra in coliziune cu el insusi */
-	if (is_incolision(new_snake) == 1) {
+	if (snk_is_incolision(&new_snake[snk_n - 1], new_snake) == 1) {
 		snk_dead();
 		return;
 	}	
@@ -249,15 +250,23 @@ static int get_intp(struct Unit *p)
 }
 
 /* Verifica daca o unitate nu apartine sarpelui, pentru a detecta coliziunile*/
-static int is_incolision(struct Unit *p)
+int snk_is_incolision(struct Unit *u,		/* pointer catre un element */
+		struct Unit *snk)		/* vector */
 {
 	int i;
+	int aparitii;
 
-	for (i = 0; i < snk_n - 1; i++)
-		if (p->x == p[snk_n - 1].x && p->y == p[snk_n - 1].y)
-			return 1;
+	aparitii = 0;
+	for (i = 0; i < snk_n; i++)
+		if (coord_egale(u, &snk[i]) == 1)
+			++aparitii;
 
-	return 0;
+	/* Daca sunt doua unitati cu coordonatele egale, atunci se
+	 * suprapun */
+	if (aparitii == 2)
+		return 1;
+	else
+		return 0;
 }
 
 /* Adauga un punct de intoarcere, adica un punct unde sarpele isi schimba
@@ -355,3 +364,11 @@ static void del_tp()
 	--tp_n;
 }
 
+/* Verifica daca doua unitati, trimise ca pointer, au aceleasi coordonate */
+static int coord_egale(struct Unit *u1, struct Unit *u2)
+{
+	if (u1->x == u2->x && u1->y == u2->y)
+		return 1;
+
+	return 0;
+}
