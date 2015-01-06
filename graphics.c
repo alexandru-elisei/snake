@@ -117,7 +117,7 @@ char gph_getkey()
 {
 	char ret;
 
-	if (flag_has("play") != 0)
+	if (flag_has("playing") != 0)
 		ret = tolower(wgetch(bwin));
 
 	return ret;
