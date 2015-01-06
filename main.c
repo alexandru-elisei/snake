@@ -3,15 +3,7 @@
 #include "generic.h"
 #include "flags.h"
 #include "graphics.h"
-
-/* In snakes.c */
-void snk_init();
-
-/* In snakes.c */
-void snk_addmv(char dir);
-
-/* In snakes.c */
-int snk_isdir(char c);
+#include "snakes.h"
 
 void error_check(char *msg);
 
