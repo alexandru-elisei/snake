@@ -98,7 +98,7 @@ void snk_dead()
 /* Genereaza noua pozitie a sarpelui si apoi o deseneaza pe ecran */
 static void snk_update()
 {
-	struct Unit tmp;
+	struct Unit poz_viitoare;
 	int i;
 
 	if (flag_has("to_grow") == 1) {
@@ -112,21 +112,23 @@ static void snk_update()
 		for (i = 1; i < snake_len; i++)
 			snake[i - 1] =  snake[i];
 	}
-	tmp = snake[snake_len - 1];
-	muta_unitate(&tmp, next_dir);
 
-	/* Verific daca sarpele a intrat in chenar */
-	if (gph_is_onborder(&tmp) == 1) {
+	poz_viitoare = snake[snake_len - 1];
+	muta_unitate(&poz_viitoare, next_dir);
+
+	/* Verific daca sarpele nu va intra in chenar */
+	if (gph_is_onborder(&poz_viitoare) == 1) {
 		snk_dead();
 		return;
 	}
 
-	/* Verific daca sarpele nu intra in coliziune cu el insusi */
-	if (snk_is_incolision(&tmp) == 1) {
+	/* Verific daca sarpele nu va intra in coliziune cu el insusi */
+	if (snk_is_incolision(&poz_viitoare) == 1) {
 		snk_dead();
 		return;
 	}
 
+	/* Deplasez si primul element al sarpelui */
 	muta_unitate(&snake[snake_len - 1], next_dir);
 
 	/* Daca sarpele a mancat mancarea mica */
