@@ -12,7 +12,6 @@
 
 struct Unit {			/* need better name for a snake segment */
 	int x, y;		/* coordonatele curente */
-	char direction;		/* directia curenta */
 };
 
 /* Basic construct-type function */
