@@ -2,15 +2,14 @@
  * Deseneaza pe ecran grafica jocului
  */
 
-#include <curses.h>
-#include <string.h>
-#include <ctype.h>
+#include <time.h>
 #include "flags.h"
+#include "snakes.h"
 #include "graphics.h"
 #include "generic.h"
 
-#define BWIN_LENX	40	/* lungimea pe x a chenarului */
-#define BWIN_LENY	20	/* lungimea pe y a chenarului */
+#define CWIN_LENX	40	/* lungimea pe x a chenarului */
+#define CWIN_LENY	20	/* lungimea pe y a chenarului */
 #define SCRWIN_LENY	1	/* inaltimea ferestrei de scor */
 #define MENUWIN_LENY	1	/* inaltimea ferestrei de menu */
 #define PADDING_HORIZ	1	/* horizontal padding */	
@@ -23,6 +22,7 @@ struct Chenar {
 };
 
 static struct Chenar chenar;	/* chenarul */
+static struct Unit small_food;		/* mancarea cu scorul cel mai mic */
 static WINDOW *scrwin;		/* score window */
 static WINDOW *menuwin;		/* menu window */
 
@@ -33,6 +33,7 @@ static FILE *f;
 /* Antet functii locale/private */
 
 static void destroy_window(WINDOW *win);
+static void gen_small_food(struct Unit *food);
 
 /* Basic construct-type function */
 void gph_init()
@@ -62,16 +63,16 @@ void gph_init()
 void gph_drwborder()
 {
 	/* Ma asigur ca am spatiu sa desenez si bara de scor si de meniu */
-	if (LINES < (BWIN_LENY + SCRWIN_LENY + MENUWIN_LENY + PADDING_VERT * 2)
-		       	|| COLS < (BWIN_LENX + PADDING_HORIZ * 2)) {
+	if (LINES < (CWIN_LENY + SCRWIN_LENY + MENUWIN_LENY + PADDING_VERT * 2)
+		       	|| COLS < (CWIN_LENX + PADDING_HORIZ * 2)) {
 		flag_add("fatal_error", 1);
 		return;
 	}
 
-	chenar.starty = (LINES - BWIN_LENY) / 2;
-	chenar.startx = (COLS - BWIN_LENX) / 2;
+	chenar.starty = (LINES - CWIN_LENY) / 2;
+	chenar.startx = (COLS - CWIN_LENX) / 2;
 
-	chenar.wnd = newwin(BWIN_LENY, BWIN_LENX, chenar.starty, chenar.startx);
+	chenar.wnd = newwin(CWIN_LENY, CWIN_LENX, chenar.starty, chenar.startx);
 
 	//init_color(COLOR_WOOD, 255, 211, 155);
 	init_pair(1, COLOR_RED, COLOR_BLUE);
@@ -88,8 +89,8 @@ void gph_drwborder()
 int gph_is_onborder(struct Unit *p)
 {
 	if (p->x == 0 || p->y == 0 ||
-			p->x == (BWIN_LENX - 1) ||
-			p->y == (BWIN_LENY - 1))
+			p->x == (CWIN_LENX - 1) ||
+			p->y == (CWIN_LENY - 1))
 		return 1;
 
 	return 0;
@@ -98,8 +99,8 @@ int gph_is_onborder(struct Unit *p)
 /* Afla pozitia din centrul ferestrei */
 void gph_getcenter(int *x, int *y)
 {
-	*x = BWIN_LENX / 2;
-	*y = BWIN_LENY / 2;
+	*x = CWIN_LENX / 2;
+	*y = CWIN_LENY / 2;
 }
 
 /* Printeaza un text in mijlocul ecranului */
@@ -142,6 +143,16 @@ void gph_drwsnk(struct Unit *snake, int snk_n)
 		mvwprintw(chenar.wnd, snake[i].y, snake[i].x, "%c", '*');
 	}
 
+	if (flag_has("small_food") == 0) {
+		gen_small_food(&small_food);
+		flag_add("small_food", 1);
+	}
+
+	wattron(chenar.wnd, A_BLINK);
+	mvwprintw(chenar.wnd, small_food.y, small_food.y, "%c", '0');
+	wattroff(chenar.wnd, A_BLINK);
+
+
 	/* O opresc */
 	//wattroff(bwin, COLOR_PAIR(1));
 	/* Desenez schimbarile pe ecran */
@@ -166,3 +177,14 @@ static void destroy_window(WINDOW *win)
 	}
 }
 
+/* Genereaza un punct normal pentru sarpe de mancat */
+static void gen_small_food(struct Unit *food)
+{
+	srand(time(NULL));
+
+	do {
+		food->x = rand() % (CWIN_LENX - 2) + 1;
+		food->y = rand() % (CWIN_LENY - 2) + 1;
+	} while (snk_is_incolision(food) == 1 ||
+			gph_is_onborder(food) == 1);
+}
