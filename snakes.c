@@ -49,10 +49,10 @@ void snk_init()
 void snk_addmv(char dir)
 {
 
-	if (dir == UP && snake[snake_len - 1].direction == DOWN);
-	else if (dir == DOWN && snake[snake_len - 1].direction == UP);
-	else if (dir == LEFT && snake[snake_len - 1].direction == RIGHT);
-	else if (dir == RIGHT && snake[snake_len - 1].direction == LEFT);
+	if (dir == UP && next_dir == DOWN);
+	else if (dir == DOWN && next_dir == UP);
+	else if (dir == LEFT && next_dir == RIGHT);
+	else if (dir == RIGHT && next_dir == LEFT);
 	else if (dir == UP || dir == DOWN || dir == LEFT || dir == RIGHT)
 		next_dir = dir;
 
@@ -172,7 +172,6 @@ static void creeaza_sarpe()
 	for (i = 0; i < snake_len; i++) {
 		snake[i].x = x + i;
 		snake[i].y = y;
-		snake[i].direction = RIGHT;
 	}
 }
 
@@ -193,8 +192,6 @@ static void muta_unitate(struct Unit *u, char dir)
 			++(u->x);
 			break;
 	}
-
-	u->direction = dir;
 }
 
 /* Verifica daca doua unitati, trimise ca pointer, au aceleasi coordonate */

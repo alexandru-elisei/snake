@@ -16,11 +16,15 @@
 #define PADDING_HORIZ	1	/* horizontal padding */	
 #define PADDING_VERT	1	/* vertical padding */	
 
-static WINDOW *bwin;		/* border window */
+struct Chenar {		
+	WINDOW *wnd;		/* fereastra in care se misca sarpele */
+	int startx;		/* abscisa bordajului */
+	int starty;		/* coordonata bordajului */
+};
+
+static struct Chenar chenar;	/* chenarul */
 static WINDOW *scrwin;		/* score window */
 static WINDOW *menuwin;		/* menu window */
-static int bwin_startx;		/* abscisa bordajului */
-static int bwin_starty;		/* coordonata bordajului */
 
 /*********************************************/
 static FILE *f;
@@ -46,14 +50,12 @@ void gph_init()
 		start_color();
 	}
 
-	/* Initializez pointerii catre ferestre */
-	bwin = NULL;
+	chenar.wnd = NULL;
+	chenar.startx = -1;
+	chenar.starty = -1;
+
 	scrwin = NULL;
 	menuwin = NULL;
-
-	/* Initializez coordonatele bordajului */
-	bwin_startx = -1;
-	bwin_starty = -1;
 }
 
 /* Deseneaza chenarul in care se poate misca sarpele */
@@ -66,20 +68,20 @@ void gph_drwborder()
 		return;
 	}
 
-	bwin_starty = (LINES - BWIN_LENY) / 2;
-	bwin_startx = (COLS - BWIN_LENX) / 2;
+	chenar.starty = (LINES - BWIN_LENY) / 2;
+	chenar.startx = (COLS - BWIN_LENX) / 2;
 
-	bwin = newwin(BWIN_LENY, BWIN_LENX, bwin_starty, bwin_startx);
+	chenar.wnd = newwin(BWIN_LENY, BWIN_LENX, chenar.starty, chenar.startx);
 
 	//init_color(COLOR_WOOD, 255, 211, 155);
 	init_pair(1, COLOR_RED, COLOR_BLUE);
 	init_pair(2, COLOR_BLACK, COLOR_YELLOW);
 
-	wattron(bwin, COLOR_PAIR(1));
-	wborder(bwin,  '+',  '+', '+', '+', '+', '+', '+', '+');
-	wattroff(bwin, COLOR_PAIR(1));
+	wattron(chenar.wnd, COLOR_PAIR(1));
+	wborder(chenar.wnd,  '+',  '+', '+', '+', '+', '+', '+', '+');
+	wattroff(chenar.wnd, COLOR_PAIR(1));
 
-	wrefresh(bwin);
+	wrefresh(chenar.wnd);
 }
 
 /* Returneaza 1 daca un punct se afla pe bordaj */
@@ -108,8 +110,8 @@ void gph_printcenter(char *msg)
 	gph_getcenter(&startx, &starty);
 	startx = startx - strlen(msg) / 2;
 
-	mvwprintw(bwin, starty, startx, "%s", msg);
-	wrefresh(bwin);
+	mvwprintw(chenar.wnd, starty, startx, "%s", msg);
+	wrefresh(chenar.wnd);
 }
 
 /* Citeste o directie */
@@ -118,7 +120,7 @@ char gph_getkey()
 	char ret;
 
 	if (flag_has("playing") != 0)
-		ret = tolower(wgetch(bwin));
+		ret = tolower(wgetch(chenar.wnd));
 
 	return ret;
 }
@@ -137,7 +139,7 @@ void gph_drwsnk(struct Unit *snake, int snk_n)
 	*/
 
 	for (i = 0; i < snk_n; i++) {
-		mvwprintw(bwin,
+		mvwprintw(chenar.wnd,
 			snake[i].y,
 			snake[i].x,
 			"%c", '*');
@@ -146,12 +148,12 @@ void gph_drwsnk(struct Unit *snake, int snk_n)
 	/* O opresc */
 	//wattroff(bwin, COLOR_PAIR(1));
 	/* Desenez schimbarile pe ecran */
-	wrefresh(bwin);
+	wrefresh(chenar.wnd);
 }
 
 void gph_reset()
 {
-	destroy_window(bwin);
+	destroy_window(chenar.wnd);
 	destroy_window(scrwin);
 	destroy_window(menuwin);
 	endwin();
