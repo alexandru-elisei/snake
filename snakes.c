@@ -11,7 +11,7 @@ static struct Unit *snake;	/* sarpele, duh */
 static struct Unit *turns;	/* punctele de intoarcere */
 /* Directia in care se va misca sarpele la urmatoarea actualizare a ecranului */
 static char next_dir;
-static int snake_len, turns_len;	/* lungimile curente ale sarpelui si ale
+static int snake_len, turns_len;/* lungimile curente ale sarpelui si ale
 				 * vectorului de puncte de intoarcere */
 static int snake_mem;		/* memoria alocata curent sarpelui */
 static int turns_mem;		/* memoria alocata curent lui turns */
@@ -19,7 +19,6 @@ static int turns_mem;		/* memoria alocata curent lui turns */
 /******************************************************/
 static FILE *f;
 /******************************************************/
-
 
 /* Antet functii locale/private */
 static void aloca_mem(struct Unit **p, int *mem);
