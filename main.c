@@ -18,18 +18,20 @@ int main(void)
 
 	gph_init();
 
-	gph_drwborder();
-	error_check("DRAWING BORDER");	
-
 	flag_init();
 	error_check("INITIALIZING FLAGS");	
+
+	gph_drwmenu();
+	error_check("DRAWING MENU");	
+
+	getchar();
 
 	snk_init();
 	error_check("INITIALIZING SNAKE");	
 
-
 	//f = fopen(DEB_FILE, "a");
 
+	curs_set(FALSE);
 	/*
 	flag_add("dead", 1);
 	if (flag_has("dead") != 0)
