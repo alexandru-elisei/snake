@@ -1,6 +1,4 @@
-/*
- * Deseneaza pe ecran grafica jocului
- */
+/* Deseneaza pe ecran grafica jocului */
 
 #include <time.h>
 #include "flags.h"
@@ -9,11 +7,12 @@
 #include "generic.h"
 
 #define CWIN_LENX	40	/* lungimea pe x a chenarului */
-#define CWIN_LENY	20	/* lungimea pe y a chenarului */
+#define CWIN_LENY	30	/* lungimea pe y a chenarului */
 #define SCRWIN_LENY	1	/* inaltimea ferestrei de scor */
 #define MENUWIN_LENY	1	/* inaltimea ferestrei de menu */
 #define PADDING_HORIZ	1	/* horizontal padding */	
 #define PADDING_VERT	1	/* vertical padding */	
+#define OBST_LEN	6	/* lungimea obstacolelor */	
 
 struct Chenar {		
 	WINDOW *wnd;		/* fereastra in care se misca sarpele */
@@ -22,7 +21,9 @@ struct Chenar {
 };
 
 static struct Chenar chenar;	/* chenarul */
-static struct Unit small_food;		/* mancarea cu scorul cel mai mic */
+static struct Unit small_food;	/* mancarea cu scorul cel mai mic */
+static struct Unit obst1[4],	/* obstacolele */
+		   obst2[4];	/* oamenii care incearca sa prinda sarpele */
 static WINDOW *scrwin;		/* score window */
 static WINDOW *menuwin;		/* menu window */
 
@@ -33,7 +34,10 @@ static FILE *f;
 /* Antet functii locale/private */
 
 static void destroy_window(WINDOW *win);
+
 static void gen_small_food(struct Unit *food);
+
+static void gen_obstacles(struct Unit *o);	/* pointer de unitati */
 
 /* Basic construct-type function */
 void gph_init()
@@ -137,12 +141,19 @@ void gph_drwsnk(struct Unit *snake, int snk_n)
 		mvwprintw(chenar.wnd, snake[i].y, snake[i].x, "%c", '*');
 	}
 
+	srand(time(NULL));
+
 	if (flag_has("small_food") == 0) {
 		gen_small_food(&small_food);
 		flag_add("small_food", 1);
 	}
 
 	mvwprintw(chenar.wnd, small_food.y, small_food.x, "%c", '0');
+
+	gen_obstacles(obst1);
+
+	for (i = 0; i < OBST_LEN; i++)
+		mvwprintw(chenar.wnd, obst1[i].y, obst1[i].x, "%c", '+');
 
 	wrefresh(chenar.wnd);
 }
@@ -171,7 +182,6 @@ int gph_is_onsmfood(struct Unit *u)
 	return 0;
 }
 
-
 void gph_reset()
 {
 	destroy_window(chenar.wnd);
@@ -179,6 +189,15 @@ void gph_reset()
 	destroy_window(menuwin);
 
 	endwin();
+}
+
+/* Verifica daca doua unitati, trimise ca pointer, au aceleasi coordonate */
+int gph_is_eq(struct Unit *u1, struct Unit *u2)
+{
+	if (u1->x == u2->x && u1->y == u2->y)
+		return 1;
+
+	return 0;
 }
 
 static void destroy_window(WINDOW *win)
@@ -193,8 +212,6 @@ static void destroy_window(WINDOW *win)
 /* Genereaza un punct normal pentru sarpe de mancat */
 static void gen_small_food(struct Unit *food)
 {
-	srand(time(NULL));
-
 	do {
 		food->x = rand() % (CWIN_LENX - 2) + 1;
 		food->y = rand() % (CWIN_LENY - 2) + 1;
@@ -202,11 +219,60 @@ static void gen_small_food(struct Unit *food)
 			gph_is_onborder(food) == 1);
 }
 
-/* Verifica daca doua unitati, trimise ca pointer, au aceleasi coordonate */
-int gph_is_eq(struct Unit *u1, struct Unit *u2)
+/* Genereaza obstacolele pe ecran */
+static void gen_obstacles(struct Unit *o)
 {
-	if (u1->x == u2->x && u1->y == u2->y)
-		return 1;
+	int valid;
+	struct Unit centru;
+	int obst_oriz;		/* daca obstacolulul va fi orizontal (==1) */
+	int i;
 
-	return 0;
+	valid = 0;
+	while (valid == 0) {
+		valid = 1;
+
+		obst_oriz = rand() % 2;
+
+		/* Obstacolul are lungimea de OBST_LEN caractere, cu spatiu in
+		 * mijloc. Daca e orizontal centrul cel mai din stanga are 
+		 * x = 3 si cel mai din dreapta x = CWIN_LENX - 4 */
+		if (obst_oriz == 1) {
+			centru.x = rand() % (CWIN_LENX - OBST_LEN - 2) + OBST_LEN / 2 + 1;
+			centru.y = rand() % (CWIN_LENY - 2) + 1;
+
+			for (i = OBST_LEN / 2; i > 0; i--) {
+				o[OBST_LEN / 2 - i].x = centru.x - i;
+				o[OBST_LEN / 2 - i].y = centru.y;
+			}
+
+			/* Am spatiu intre cele doua ramuri ale obstacolului */
+			for (i = OBST_LEN / 2; i < OBST_LEN; i++) {
+				o[i].x = centru.x + i - 1;
+				o[i].y = centru.y;
+			}
+		} else {
+			centru.x = rand() % (CWIN_LENX - 2) + 1;
+			centru.y = rand() % (CWIN_LENY - OBST_LEN - 2) + OBST_LEN / 2 + 1;
+
+			for (i = OBST_LEN / 2; i > 0; i--) {
+				o[OBST_LEN / 2 - i].y = centru.y - i;
+				o[OBST_LEN / 2 - i].x = centru.x;
+			}
+
+			/* Am spatiu intre cele doua ramuri ale obstacolului */
+			for (i = OBST_LEN / 2; i < OBST_LEN; i++) {
+				o[i].y = centru.y + i - 1;
+				o[i].x = centru.x;
+			}
+		}
+
+		/* Verific validitatea obstacolului */
+		for (i = 0; i < OBST_LEN; i ++)
+			if (gph_is_onborder(&o[i]) == 1 ||
+					gph_is_onsmfood(&o[i]) == 1 ||
+					snk_is_incolision(&o[i])) {
+				valid = 0;
+				break;
+			}
+	}
 }
