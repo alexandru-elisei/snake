@@ -98,6 +98,7 @@ void snk_dead()
 /* Genereaza noua pozitie a sarpelui si apoi o deseneaza pe ecran */
 static void snk_update()
 {
+	struct Unit tmp;
 	int i;
 
 	if (flag_has("to_grow") == 1) {
@@ -111,19 +112,22 @@ static void snk_update()
 		for (i = 1; i < snake_len; i++)
 			snake[i - 1] =  snake[i];
 	}
-	muta_unitate(&snake[snake_len - 1], next_dir);
+	tmp = snake[snake_len - 1];
+	muta_unitate(&tmp, next_dir);
 
 	/* Verific daca sarpele a intrat in chenar */
-	if (gph_is_onborder(&snake[snake_len - 1]) == 1) {
+	if (gph_is_onborder(&tmp) == 1) {
 		snk_dead();
 		return;
 	}
 
 	/* Verific daca sarpele nu intra in coliziune cu el insusi */
-	if (snk_is_incolision(&snake[snake_len - 1]) == 1) {
+	if (snk_is_incolision(&tmp) == 1) {
 		snk_dead();
 		return;
 	}
+
+	muta_unitate(&snake[snake_len - 1], next_dir);
 
 	/* Daca sarpele a mancat mancarea mica */
 	if (gph_is_onsmfood(&snake[snake_len - 1]) == 1) {
@@ -145,12 +149,7 @@ int snk_is_incolision(struct Unit *u)		/* pointer catre un element */
 		if (gph_is_eq(u, &snake[i]) == 1)
 			++aparitii;
 
-	/* Daca sunt doua unitati cu coordonatele egale, atunci se
-	 * suprapun */
-	if (aparitii == 2)
-		return 1;
-	else
-		return 0;
+	return aparitii;
 }
 
 /* Aloca memorie pentru vectori de tip Unit */
