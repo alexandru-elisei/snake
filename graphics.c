@@ -6,8 +6,8 @@
 #include "graphics.h"
 #include "generic.h"
 
-#define CWIN_LENX	40	/* lungimea pe x a chenarului */
-#define CWIN_LENY	30	/* lungimea pe y a chenarului */
+#define CWIN_LENX	30	/* lungimea pe x a chenarului */
+#define CWIN_LENY	20	/* lungimea pe y a chenarului */
 #define SCRWIN_LENY	1	/* inaltimea ferestrei de scor */
 #define MENUWIN_LENY	1	/* inaltimea ferestrei de menu */
 #define PADDING_HORIZ	1	/* horizontal padding */	
