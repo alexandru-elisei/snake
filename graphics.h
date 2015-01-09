@@ -20,6 +20,9 @@ void gph_init();
 /* Deseneaza chenarul in care se poate misca sarpele */
 void gph_drwborder();
 
+/* Deseneaza meniul */
+void gph_drwmenu();
+
 /* Returneaza 1 daca un punct se afla pe bordaj */
 int gph_is_onborder(struct Unit *p);
 

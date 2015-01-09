@@ -14,18 +14,18 @@
 #define PADDING_VERT	1	/* vertical padding */	
 #define OBST_LEN	6	/* lungimea obstacolelor */	
 
-struct Chenar {		
+struct Fereastra {		
 	WINDOW *wnd;		/* fereastra in care se misca sarpele */
 	int startx;		/* abscisa bordajului */
 	int starty;		/* coordonata bordajului */
 };
 
-static struct Chenar chenar;	/* chenarul */
+static struct Fereastra chenar;	/* chenarul */
 static struct Unit small_food;	/* mancarea cu scorul cel mai mic */
 static struct Unit obst1[OBST_LEN],	/* obstacolele */
 		   obst2[OBST_LEN];	/* oamenii care incearca sa prinda sarpele */
 static WINDOW *scrwin;		/* score window */
-static WINDOW *menuwin;		/* menu window */
+static struct Fereastra menu;	/* menu window */
 
 /*********************************************/
 static FILE *f;
@@ -34,6 +34,8 @@ static FILE *f;
 /* Antet functii locale/private */
 
 static void destroy_window(WINDOW *win);
+
+static int check_terminal_size();
 
 static void gen_small_food(struct Unit *food);
 
@@ -67,8 +69,7 @@ void gph_init()
 void gph_drwborder()
 {
 	/* Ma asigur ca am spatiu sa desenez si bara de scor si de meniu */
-	if (LINES < (CWIN_LENY + SCRWIN_LENY + MENUWIN_LENY + PADDING_VERT * 2)
-		       	|| COLS < (CWIN_LENX + PADDING_HORIZ * 2)) {
+	if (check_terminal_size() == 0) {
 		flag_add("fatal_error", 1);
 		return;
 	}
@@ -87,6 +88,11 @@ void gph_drwborder()
 	wattroff(chenar.wnd, COLOR_PAIR(1));
 
 	wrefresh(chenar.wnd);
+}
+
+/* Deseneaza meniul */
+void gph_drwmenu()
+{
 }
 
 /* Returneaza 1 daca un punct se afla pe bordaj */
@@ -216,7 +222,7 @@ void gph_reset()
 {
 	destroy_window(chenar.wnd);
 	destroy_window(scrwin);
-	destroy_window(menuwin);
+	destroy_window(menu.wnd);
 
 	endwin();
 }
@@ -312,4 +318,16 @@ static void gen_obstacles(struct Unit *o)
 			}
 		}
 	}
+}
+
+/* Verific daca terminalul este indeajuns de mare incat sa desenez pe el */
+static int check_terminal_size()
+{
+
+	/* Ma asigur ca am spatiu sa desenez si bara de scor si de meniu */
+	if (LINES < (CWIN_LENY + SCRWIN_LENY + MENUWIN_LENY + PADDING_VERT * 2)
+		       	|| COLS < (CWIN_LENX + PADDING_HORIZ * 2))
+		return 0;
+
+	return 1;
 }
