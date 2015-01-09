@@ -37,7 +37,7 @@ void snk_init()
 	next_dir = RIGHT;
 
 	/* Anunt programul ca incep sa ma joc */
-	flag_add("playing", 1);
+	flag_add("game_mode", 1);
 
 	/* Sanity check */
 	flag_del("dead");
@@ -73,7 +73,7 @@ int snk_isdir(char c)
 void snk_reset()
 {
 	/* Nu mai ma joc */
-	flag_del("playing");
+	flag_del("game_mode");
 
 	/* Distrug sarpele */
 	snake_len = 0;

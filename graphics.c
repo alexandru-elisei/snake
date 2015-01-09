@@ -114,12 +114,12 @@ void gph_printcenter(char *msg)
 	wrefresh(chenar.wnd);
 }
 
-/* Citeste o directie */
+/* Citeste o tasta in functie de modul curent */
 char gph_getkey()
 {
 	char ret;
 
-	if (flag_has("playing") != 0)
+	if (flag_has("game_mode") != 0)
 		ret = tolower(wgetch(chenar.wnd));
 
 	return ret;
@@ -139,10 +139,7 @@ void gph_drwsnk(struct Unit *snake, int snk_n)
 	*/
 
 	for (i = 0; i < snk_n; i++) {
-		mvwprintw(chenar.wnd,
-			snake[i].y,
-			snake[i].x,
-			"%c", '*');
+		mvwprintw(chenar.wnd, snake[i].y, snake[i].x, "%c", '*');
 	}
 
 	/* O opresc */
@@ -156,6 +153,7 @@ void gph_reset()
 	destroy_window(chenar.wnd);
 	destroy_window(scrwin);
 	destroy_window(menuwin);
+
 	endwin();
 }
 
