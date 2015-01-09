@@ -7,7 +7,7 @@
 #include "generic.h"
 
 #define CWIN_LENX	30	/* lungimea pe x a chenarului */
-#define CWIN_LENY	20	/* lungimea pe y a chenarului */
+#define CWIN_LENY	25	/* lungimea pe y a chenarului */
 #define SCRWIN_LENY	1	/* inaltimea ferestrei de scor */
 #define MENUWIN_LENY	1	/* inaltimea ferestrei de menu */
 #define PADDING_HORIZ	1	/* horizontal padding */	
@@ -61,8 +61,11 @@ void gph_init()
 	chenar.startx = -1;
 	chenar.starty = -1;
 
+	menu.wnd = NULL;
+	menu.startx = -1;
+	menu.starty = -1;
+
 	scrwin = NULL;
-	menuwin = NULL;
 }
 
 /* Deseneaza chenarul in care se poate misca sarpele */
@@ -93,6 +96,48 @@ void gph_drwborder()
 /* Deseneaza meniul */
 void gph_drwmenu()
 {
+	int centru_x;
+
+	/* Ma asigur ca am spatiu sa desenez si bara de scor si de meniu */
+	if (check_terminal_size() == 0) {
+		flag_add("fatal_error", 1);
+		return;
+	}
+
+	menu.starty = (LINES - CWIN_LENY) / 2 + MENUWIN_LENY;
+	menu.startx = (COLS - CWIN_LENX) / 2;
+	menu.wnd = newwin(CWIN_LENY + MENUWIN_LENY, CWIN_LENX, menu.starty, menu.startx);
+
+	centru_x = (CWIN_LENX - strlen(TITLU)) / 2;
+	wattron(menu.wnd, A_BOLD);
+	mvwprintw(menu.wnd, 0, centru_x, "%s\n", TITLU);
+	wattroff(menu.wnd, A_BOLD);
+
+	mvwprintw(menu.wnd, 2, 0, "Life has been kind to you. You");
+	mvwprintw(menu.wnd, 3, 0, "have your own backyard, the");
+	mvwprintw(menu.wnd, 4, 0, "mice are plentiful, and");
+	mvwprintw(menu.wnd, 5, 0, "sometimes, if you are lucky,");
+	mvwprintw(menu.wnd, 6, 0, "you catch a rabbit. A pink,");
+	mvwprintw(menu.wnd, 7, 0, "fluffy rabbit. A very tasty,");
+	mvwprintw(menu.wnd, 8, 0, "pink, fluffy rabbit.");
+
+	mvwprintw(menu.wnd, 10, 0, "...Until one day. When the");
+	mvwprintw(menu.wnd, 11, 0, "pesky, nasty, bipedal humans");
+	mvwprintw(menu.wnd, 12, 0, "saw you in your yard and they");
+	mvwprintw(menu.wnd, 13, 0, "tried to stop you.");
+
+	mvwprintw(menu.wnd, 15, 0, "Will you manage to ESCAPE THE");
+	mvwprintw(menu.wnd, 16, 0, "BACKYARD?");
+
+	mvwprintw(menu.wnd, 18, 0, "Choose your game mode:");
+	mvwprintw(menu.wnd, 19, 0, "1. Baby-snake mode.");
+	mvwprintw(menu.wnd, 20, 0, "2. Man-snake mode.");
+
+	mvwprintw(menu.wnd, 22, 0, "");
+	curs_set(TRUE);
+
+	wrefresh(menu.wnd);
+
 }
 
 /* Returneaza 1 daca un punct se afla pe bordaj */
