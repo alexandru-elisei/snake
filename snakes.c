@@ -109,7 +109,7 @@ static void snk_update()
 	}
 
 	/* Verific daca sarpele nu intra in coliziune cu el insusi */
-	if (snk_is_incolision(&snake[snake_len - 1], snake) == 1) {
+	if (snk_is_incolision(&snake[snake_len - 1]) == 1) {
 		snk_dead();
 		return;
 	}
@@ -118,15 +118,14 @@ static void snk_update()
 }
 
 /* Verifica daca o unitate nu apartine sarpelui, pentru a detecta coliziunile*/
-int snk_is_incolision(struct Unit *u,		/* pointer catre un element */
-		struct Unit *snk)		/* vector */
+int snk_is_incolision(struct Unit *u)		/* pointer catre un element */
 {
 	int i;
 	int aparitii;
 
 	aparitii = 0;
 	for (i = 0; i < snake_len; i++)
-		if (coord_egale(u, &snk[i]) == 1)
+		if (coord_egale(u, &snake[i]) == 1)
 			++aparitii;
 
 	/* Daca sunt doua unitati cu coordonatele egale, atunci se

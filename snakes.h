@@ -24,6 +24,6 @@ void snk_reset();
 void snk_dead();
 
 /* Verifica daca o unitate a sarpelui este in coliziune cu el insusi */
-int snk_is_incolision(struct Unit *u, struct Unit *snk);
+int snk_is_incolision(struct Unit *u);
 
 #endif	/* #ifndef SNAKES_H */
