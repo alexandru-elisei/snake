@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <curses.h>
+#include <ctype.h>
 
 #define MEM_INC 20		/* incrementul de alocare dinamica a memoriei */
 #define FOREVER	1		/* for endless looping */
