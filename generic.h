@@ -8,10 +8,11 @@
 #include <curses.h>
 #include <ctype.h>
 
-#define MEM_INC 20		/* incrementul de alocare dinamica a memoriei */
-#define FOREVER	1		/* for endless looping */
+#define MEM_INC 20			/* incrementul de alocare dinamica */
+#define FOREVER	1			/* for endless looping */
+#define TITLU	"ESCAPE THE BACKYARD"	/* titlul jocului */
 
-#define DEB_FILE	"debug"	/* for debugging */
+#define DEB_FILE	"debug"		/* for debugging */
 
 #define ERROR(msg) printf("\n** FATAL ERROR %s **\n\n", (msg))
 
