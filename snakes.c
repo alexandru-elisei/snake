@@ -117,13 +117,9 @@ static void snk_update()
 	muta_unitate(&poz_viitoare, next_dir);
 
 	/* Verific daca sarpele nu va intra in chenar */
-	if (gph_is_onborder(&poz_viitoare) == 1) {
-		snk_dead();
-		return;
-	}
-
-	/* Verific daca sarpele nu va intra in coliziune cu el insusi */
-	if (snk_is_incolision(&poz_viitoare) == 1) {
+	if (gph_is_onborder(&poz_viitoare) == 1 ||
+			snk_is_incolision(&poz_viitoare) == 1 ||
+			gph_is_onobstacle(&poz_viitoare) == 1) {
 		snk_dead();
 		return;
 	}

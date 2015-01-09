@@ -22,8 +22,8 @@ struct Chenar {
 
 static struct Chenar chenar;	/* chenarul */
 static struct Unit small_food;	/* mancarea cu scorul cel mai mic */
-static struct Unit obst1[4],	/* obstacolele */
-		   obst2[4];	/* oamenii care incearca sa prinda sarpele */
+static struct Unit obst1[OBST_LEN],	/* obstacolele */
+		   obst2[OBST_LEN];	/* oamenii care incearca sa prinda sarpele */
 static WINDOW *scrwin;		/* score window */
 static WINDOW *menuwin;		/* menu window */
 
@@ -150,10 +150,18 @@ void gph_drwsnk(struct Unit *snake, int snk_n)
 
 	mvwprintw(chenar.wnd, small_food.y, small_food.x, "%c", '0');
 
-	gen_obstacles(obst1);
+	if (flag_has("obstacles") == 0) {
+		gen_obstacles(obst1);
+		flag_add("obstacles", 1);
 
-	for (i = 0; i < OBST_LEN; i++)
+		gen_obstacles(obst2);
+		flag_add("obstacles", 2);
+	}
+
+	for (i = 0; i < OBST_LEN; i++) {
 		mvwprintw(chenar.wnd, obst1[i].y, obst1[i].x, "%c", '+');
+		mvwprintw(chenar.wnd, obst2[i].y, obst2[i].x, "%c", '+');
+	}
 
 	wrefresh(chenar.wnd);
 }
@@ -181,6 +189,28 @@ int gph_is_onsmfood(struct Unit *u)
 
 	return 0;
 }
+
+/* Detects if an item bumped into an obstacle */
+int gph_is_onobstacle(struct Unit *u)
+{
+	int i;
+
+	if (flag_has("obstacles") == 0)
+		return 0;
+
+	if (flag_has("obstacles") != 0) {
+		for (i = 0; i < OBST_LEN; i++)
+			if (gph_is_eq(u, &obst1[i]) == 1)
+				return 1;
+		if (flag_has("obstacles") == 2)
+			for (i = 0; i < OBST_LEN; i++)
+				if (gph_is_eq(u, &obst2[i]) == 1)
+					return 1;
+	}
+
+	return 0;
+}
+
 
 void gph_reset()
 {
@@ -267,12 +297,19 @@ static void gen_obstacles(struct Unit *o)
 		}
 
 		/* Verific validitatea obstacolului */
-		for (i = 0; i < OBST_LEN; i ++)
+		for (i = 0; i < OBST_LEN; i ++) {
 			if (gph_is_onborder(&o[i]) == 1 ||
 					gph_is_onsmfood(&o[i]) == 1 ||
 					snk_is_incolision(&o[i])) {
 				valid = 0;
 				break;
 			}
+
+			if (flag_has("obstacles") == 1 &&
+				       gph_is_onobstacle(&o[i]) == 1) {
+				valid = 0;
+				break;
+			}
+		}
 	}
 }

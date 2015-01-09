@@ -41,6 +41,9 @@ void gph_drwsnk(struct Unit *snake, int snk_n);
 /* Detects if the snake ate the small food */
 int gph_is_onsmfood(struct Unit *u);
 
+/* Detects if the an item bumped into an obstacle */
+int gph_is_onobstacle(struct Unit *u);
+
 /* Detects if two units have the same coordinates */
 int gph_is_eq(struct Unit *u1, struct Unit *u2);
 
