@@ -21,7 +21,6 @@ static void aloca_mem(struct Unit **u, int *mem);
 static void creeaza_sarpe();
 static void muta_unitate(struct Unit *u, char dir);
 static void snk_update();
-static int coord_egale(struct Unit *u1, struct Unit *u2);
 
 /* Aici trebuie sa inceapa sa se miste sarpele */
 void snk_init()
@@ -98,8 +97,23 @@ static void snk_update()
 {
 	int i;
 
-	for (i = 1; i < snake_len; i++)
-		snake[i - 1] =  snake[i];
+	if (flag_has("to_grow") == 1) {
+		++snake_len;
+		if (snake_len == snake_mem)
+			aloca_mem(&snake, &snake_mem);
+
+		flag_del("to_grow");
+
+		snake[snake_len - 1] = snake[snake_len - 2];
+		/**********************/
+		f = fopen(DEB_FILE, "a");
+		fprintf(f, "\n\nsnake_len = %d\n", snake_len);
+		fclose(f);
+		/********************/
+	} else {
+		for (i = 1; i < snake_len; i++)
+			snake[i - 1] =  snake[i];
+	}
 	muta_unitate(&snake[snake_len - 1], next_dir);
 
 	/* Verific daca sarpele a intrat in chenar */
@@ -114,6 +128,17 @@ static void snk_update()
 		return;
 	}
 
+	if (gph_is_onsmfood(&snake[snake_len - 1]) == 1) {
+
+		/**********************/
+		f = fopen(DEB_FILE, "a");
+		fprintf(f, "%s\n", "snk_update -> detects the snake being on food");
+		fclose(f);
+		/********************/
+		flag_del("small_food");
+		flag_add("to_grow", 1);
+	}
+
 	gph_drwsnk(snake, snake_len);
 }
 
@@ -125,7 +150,7 @@ int snk_is_incolision(struct Unit *u)		/* pointer catre un element */
 
 	aparitii = 0;
 	for (i = 0; i < snake_len; i++)
-		if (coord_egale(u, &snake[i]) == 1)
+		if (gph_is_eq(u, &snake[i]) == 1)
 			++aparitii;
 
 	/* Daca sunt doua unitati cu coordonatele egale, atunci se
@@ -191,13 +216,4 @@ static void muta_unitate(struct Unit *u, char dir)
 			++(u->x);
 			break;
 	}
-}
-
-/* Verifica daca doua unitati, trimise ca pointer, au aceleasi coordonate */
-static int coord_egale(struct Unit *u1, struct Unit *u2)
-{
-	if (u1->x == u2->x && u1->y == u2->y)
-		return 1;
-
-	return 0;
 }

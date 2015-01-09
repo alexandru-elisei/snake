@@ -133,12 +133,6 @@ void gph_drwsnk(struct Unit *snake, int snk_n)
 
 	gph_drwborder();
 
-	/* Setez culoarea verde pentru snake */
-	/*
-	init_pair(1, COLOR_GREEN, COLOR_BLACK);
-	wattron(bwin, COLOR_PAIR(1));
-	*/
-
 	for (i = 0; i < snk_n; i++) {
 		mvwprintw(chenar.wnd, snake[i].y, snake[i].x, "%c", '*');
 	}
@@ -148,16 +142,35 @@ void gph_drwsnk(struct Unit *snake, int snk_n)
 		flag_add("small_food", 1);
 	}
 
-	wattron(chenar.wnd, A_BLINK);
-	mvwprintw(chenar.wnd, small_food.y, small_food.y, "%c", '0');
-	wattroff(chenar.wnd, A_BLINK);
+	mvwprintw(chenar.wnd, small_food.y, small_food.x, "%c", '0');
 
-
-	/* O opresc */
-	//wattroff(bwin, COLOR_PAIR(1));
-	/* Desenez schimbarile pe ecran */
 	wrefresh(chenar.wnd);
 }
+
+/* Detects if the snake ate the small food */
+int gph_is_onsmfood(struct Unit *u)
+{
+	/*
+	f = fopen(DEB_FILE, "a");
+	fprintf(f, "\n\ngph_is_onsmfood; u.x = %d, u.y = %d, sf.x = %d, sf.y = %d\n",
+			u->x, u->y, small_food.x, small_food.y);
+	fflush(f);
+	*/
+	if (flag_has("small_food") == 0)
+		return 0;
+
+	//fprintf(f, "%s\n", "I have the small food flag.");
+	//fflush(f);
+
+	if (gph_is_eq(u, &small_food) == 1)
+		return 1;
+
+	//fprintf(f, "%s\n", "u is not equal to small_food.");
+	//fflush(f);
+
+	return 0;
+}
+
 
 void gph_reset()
 {
@@ -187,4 +200,13 @@ static void gen_small_food(struct Unit *food)
 		food->y = rand() % (CWIN_LENY - 2) + 1;
 	} while (snk_is_incolision(food) == 1 ||
 			gph_is_onborder(food) == 1);
+}
+
+/* Verifica daca doua unitati, trimise ca pointer, au aceleasi coordonate */
+int gph_is_eq(struct Unit *u1, struct Unit *u2)
+{
+	if (u1->x == u2->x && u1->y == u2->y)
+		return 1;
+
+	return 0;
 }
