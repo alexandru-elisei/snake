@@ -18,8 +18,11 @@ static FILE *f;
 
 /* Antet functii locale/private */
 static void aloca_mem(struct Unit **u, int *mem);
+
 static void creeaza_sarpe();
+
 static void muta_unitate(struct Unit *u, char dir);
+
 static void snk_update();
 
 /* Aici trebuie sa inceapa sa se miste sarpele */
@@ -101,15 +104,9 @@ static void snk_update()
 		++snake_len;
 		if (snake_len == snake_mem)
 			aloca_mem(&snake, &snake_mem);
+		snake[snake_len - 1] = snake[snake_len - 2];
 
 		flag_del("to_grow");
-
-		snake[snake_len - 1] = snake[snake_len - 2];
-		/**********************/
-		f = fopen(DEB_FILE, "a");
-		fprintf(f, "\n\nsnake_len = %d\n", snake_len);
-		fclose(f);
-		/********************/
 	} else {
 		for (i = 1; i < snake_len; i++)
 			snake[i - 1] =  snake[i];
@@ -128,13 +125,8 @@ static void snk_update()
 		return;
 	}
 
+	/* Daca sarpele a mancat mancarea mica */
 	if (gph_is_onsmfood(&snake[snake_len - 1]) == 1) {
-
-		/**********************/
-		f = fopen(DEB_FILE, "a");
-		fprintf(f, "%s\n", "snk_update -> detects the snake being on food");
-		fclose(f);
-		/********************/
 		flag_del("small_food");
 		flag_add("to_grow", 1);
 	}
