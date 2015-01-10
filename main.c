@@ -25,16 +25,26 @@ int main(void)
 
 	gph_drwmenu();
 	error_check("DRAWING MENU");	
+	flag_add("menu_mode", 1);
 
 	while (FOREVER) {
 		key = gph_getkey();
 
+		if (gph_is_quitkey(key) == 1)
+			break;
+
 		if (flag_has("menu_mode") != 0) {
-			curs_set(FALSE);
-			snk_init();
-			error_check("INITIALIZING SNAKE");	
+			if (gph_is_menukey(key) == 1) {
+				gph_menuact(key);
+				snk_init();
+				error_check("INITIALIZING SNAKE");	
+
+				/* Entering game mode */
+				flag_del("menu_mode");
+				flag_add("game_mode", 1);
+			}
 		} else {
-			if (key == 'q' || flag_has("dead") != 0)
+			if (flag_has("dead") != 0)
 				break;
 			if (snk_isdir(key) == 1)
 				snk_addmv(key);

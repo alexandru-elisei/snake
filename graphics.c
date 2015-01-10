@@ -20,8 +20,8 @@
 
 #define OBST_LEN	6	/* lungimea obstacolelor */	
 
-#define MKEY_BABY	'1'	/* dificultate meniu usoara (baby-snake) */
-#define MKEY_MAN	'2'	/* dificultatea meniu grea (man-snake) */
+#define MKEY_EASY	'1'	/* dificultate meniu usoara (baby-snake) */
+#define MKEY_HARD	'2'	/* dificultatea meniu grea (man-snake) */
 #define MKEY_QUIT	'q'	/* tasta de iesit din joc */
 
 struct Fereastra {		
@@ -136,10 +136,11 @@ void gph_drwmenu()
 	mvwprintw(menu.win, 12, 0, "Will you manage to ESCAPE THE BACKYARD?");
 
 	mvwprintw(menu.win, 14, 0, "Choose your game mode:");
-	mvwprintw(menu.win, 15, 0, "(1) Baby-snake mode.");
-	mvwprintw(menu.win, 16, 0, "(2) Man-snake mode.");
-	mvwprintw(menu.win, 17, 0, "(Q) to quit game.");
+	mvwprintw(menu.win, 15, 0, "(%c) Baby-snake mode.", MKEY_EASY);
+	mvwprintw(menu.win, 16, 0, "(%c) Man-snake mode.", MKEY_HARD);
+	mvwprintw(menu.win, 17, 0, "(%c) to quit game.", MKEY_QUIT);
 
+	nocbreak();
 	mvwprintw(menu.win, 19, 0, "");
 	curs_set(TRUE);
 
@@ -186,19 +187,50 @@ char gph_getkey()
 
 	if (flag_has("game_mode") != 0)
 		ret = tolower(wgetch(chenar.win));
-	else if (flag_has("menu_mode") != 0)
+	else if (flag_has("menu_mode") != 0) {
 		ret = tolower(wgetch(menu.win));
+		wprintw(menu.win, "%c", ret);
+	}
 
 	return ret;
 }
 
 /* Returneaza 1 daca o tasta e tasta valida pentru meniu */
 int gph_is_menukey(char key)
-{}
+{
+	key = tolower(key);
+	if (key == MKEY_EASY || key == MKEY_HARD)
+		return 1;
+
+	return 0;
+}
 
 /* Returneaza 1 daca am apasat quit */
 int gph_is_quitkey(char key)
-{}
+{
+	key = tolower(key);
+	if (key == MKEY_QUIT)
+		return 1;
+
+	return 0;
+}
+
+/* Executa o actiune de meniu */
+void gph_menuact(char key)
+{
+	key = tolower(key);
+	if (key == MKEY_EASY) {
+		flag_del("hard_difficulty");
+		flag_add("easy_difficulty", 1);
+	} else if (key == MKEY_HARD) {
+		flag_del("easy_difficulty");
+		flag_add("hard_difficulty", 1);
+	}
+
+	/* Ascund cursorul si dezactivez modul cooking */
+	cbreak();
+	curs_set(FALSE);
+}
 
 /* Deseneaza un sarpe */
 void gph_drwsnk(struct Unit *snake, int snk_n)
