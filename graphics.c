@@ -15,7 +15,7 @@
 #define OBST_LEN	6	/* lungimea obstacolelor */	
 
 struct Fereastra {		
-	WINDOW *wnd;		/* fereastra in care se misca sarpele */
+	WINDOW *win;		/* fereastra in care se misca sarpele */
 	int startx;		/* abscisa bordajului */
 	int starty;		/* coordonata bordajului */
 };
@@ -77,17 +77,17 @@ void gph_drwborder()
 	chenar.starty = (LINES - CWIN_LENY) / 2;
 	chenar.startx = (COLS - CWIN_LENX) / 2;
 
-	chenar.wnd = newwin(CWIN_LENY, CWIN_LENX, chenar.starty, chenar.startx);
+	chenar.win = newwin(CWIN_LENY, CWIN_LENX, chenar.starty, chenar.startx);
 
 	//init_color(COLOR_WOOD, 255, 211, 155);
 	init_pair(1, COLOR_RED, COLOR_BLUE);
 	init_pair(2, COLOR_BLACK, COLOR_YELLOW);
 
-	wattron(chenar.wnd, COLOR_PAIR(1));
-	wborder(chenar.wnd,  '+',  '+', '+', '+', '+', '+', '+', '+');
-	wattroff(chenar.wnd, COLOR_PAIR(1));
+	wattron(chenar.win, COLOR_PAIR(1));
+	wborder(chenar.win,  '+',  '+', '+', '+', '+', '+', '+', '+');
+	wattroff(chenar.win, COLOR_PAIR(1));
 
-	wrefresh(chenar.wnd);
+	wrefresh(chenar.win);
 }
 
 /* Deseneaza meniul */
@@ -105,37 +105,37 @@ void gph_drwmenu()
 
 	menu.starty = (LINES - CWIN_LENY) / 2 + MENUWIN_LENY;
 	menu.startx = (COLS - CWIN_LENX) / 2;
-	menu.wnd = newwin(CWIN_LENY + MENUWIN_LENY, CWIN_LENX, menu.starty, menu.startx);
+	menu.win = newwin(CWIN_LENY + MENUWIN_LENY, CWIN_LENX, menu.starty, menu.startx);
 
 	centru_x = (CWIN_LENX - strlen(TITLU)) / 2;
-	wattron(menu.wnd, A_BOLD);
-	mvwprintw(menu.wnd, 0, centru_x, "%s\n", TITLU);
-	wattroff(menu.wnd, A_BOLD);
+	wattron(menu.win, A_BOLD);
+	mvwprintw(menu.win, 0, centru_x, "%s\n", TITLU);
+	wattroff(menu.win, A_BOLD);
 
-	mvwprintw(menu.wnd, 2, 0, "Life has been kind to you. You");
-	mvwprintw(menu.wnd, 3, 0, "have your own backyard, the");
-	mvwprintw(menu.wnd, 4, 0, "mice are plentiful, and");
-	mvwprintw(menu.wnd, 5, 0, "sometimes, if you are lucky,");
-	mvwprintw(menu.wnd, 6, 0, "you catch a rabbit. A pink,");
-	mvwprintw(menu.wnd, 7, 0, "fluffy rabbit. A very tasty,");
-	mvwprintw(menu.wnd, 8, 0, "pink, fluffy rabbit.");
+	mvwprintw(menu.win, 2, 0, "Life has been kind to you. You");
+	mvwprintw(menu.win, 3, 0, "have your own backyard, the");
+	mvwprintw(menu.win, 4, 0, "mice are plentiful, and");
+	mvwprintw(menu.win, 5, 0, "sometimes, if you are lucky,");
+	mvwprintw(menu.win, 6, 0, "you catch a rabbit. A pink,");
+	mvwprintw(menu.win, 7, 0, "fluffy rabbit. A very tasty,");
+	mvwprintw(menu.win, 8, 0, "pink, fluffy rabbit.");
 
-	mvwprintw(menu.wnd, 10, 0, "...Until one day. When the");
-	mvwprintw(menu.wnd, 11, 0, "pesky, nasty, bipedal humans");
-	mvwprintw(menu.wnd, 12, 0, "saw you in your yard and they");
-	mvwprintw(menu.wnd, 13, 0, "tried to stop you.");
+	mvwprintw(menu.win, 10, 0, "...Until one day. When the");
+	mvwprintw(menu.win, 11, 0, "pesky, nasty, bipedal humans");
+	mvwprintw(menu.win, 12, 0, "saw you in your yard and they");
+	mvwprintw(menu.win, 13, 0, "tried to stop you.");
 
-	mvwprintw(menu.wnd, 15, 0, "Will you manage to ESCAPE THE");
-	mvwprintw(menu.wnd, 16, 0, "BACKYARD?");
+	mvwprintw(menu.win, 15, 0, "Will you manage to ESCAPE THE");
+	mvwprintw(menu.win, 16, 0, "BACKYARD?");
 
-	mvwprintw(menu.wnd, 18, 0, "Choose your game mode:");
-	mvwprintw(menu.wnd, 19, 0, "1. Baby-snake mode.");
-	mvwprintw(menu.wnd, 20, 0, "2. Man-snake mode.");
+	mvwprintw(menu.win, 18, 0, "Choose your game mode:");
+	mvwprintw(menu.win, 19, 0, "1. Baby-snake mode.");
+	mvwprintw(menu.win, 20, 0, "2. Man-snake mode.");
 
-	mvwprintw(menu.wnd, 22, 0, "");
+	mvwprintw(menu.win, 22, 0, "");
 	curs_set(TRUE);
 
-	wrefresh(menu.wnd);
+	wrefresh(menu.win);
 
 }
 
@@ -165,8 +165,8 @@ void gph_printcenter(char *msg)
 	gph_getcenter(&startx, &starty);
 	startx = startx - strlen(msg) / 2;
 
-	mvwprintw(chenar.wnd, starty, startx, "%s", msg);
-	wrefresh(chenar.wnd);
+	mvwprintw(chenar.win, starty, startx, "%s", msg);
+	wrefresh(chenar.win);
 }
 
 /* Citeste o tasta in functie de modul curent */
@@ -175,7 +175,7 @@ char gph_getkey()
 	char ret;
 
 	if (flag_has("game_mode") != 0)
-		ret = tolower(wgetch(chenar.wnd));
+		ret = tolower(wgetch(chenar.win));
 
 	return ret;
 }
@@ -188,7 +188,7 @@ void gph_drwsnk(struct Unit *snake, int snk_n)
 	gph_drwborder();
 
 	for (i = 0; i < snk_n; i++) {
-		mvwprintw(chenar.wnd, snake[i].y, snake[i].x, "%c", '*');
+		mvwprintw(chenar.win, snake[i].y, snake[i].x, "%c", '*');
 	}
 
 	srand(time(NULL));
@@ -198,7 +198,7 @@ void gph_drwsnk(struct Unit *snake, int snk_n)
 		flag_add("small_food", 1);
 	}
 
-	mvwprintw(chenar.wnd, small_food.y, small_food.x, "%c", '0');
+	mvwprintw(chenar.win, small_food.y, small_food.x, "%c", '0');
 
 	if (flag_has("obstacles") == 0) {
 		gen_obstacles(obst1);
@@ -209,11 +209,11 @@ void gph_drwsnk(struct Unit *snake, int snk_n)
 	}
 
 	for (i = 0; i < OBST_LEN; i++) {
-		mvwprintw(chenar.wnd, obst1[i].y, obst1[i].x, "%c", '+');
-		mvwprintw(chenar.wnd, obst2[i].y, obst2[i].x, "%c", '+');
+		mvwprintw(chenar.win, obst1[i].y, obst1[i].x, "%c", '+');
+		mvwprintw(chenar.win, obst2[i].y, obst2[i].x, "%c", '+');
 	}
 
-	wrefresh(chenar.wnd);
+	wrefresh(chenar.win);
 }
 
 /* Detects if the snake ate the small food */
@@ -272,11 +272,11 @@ void gph_reset()
 
 static void destroy_window(struct Fereastra *w)
 {
-	if (w->wnd != NULL) {
-		wclear(w->wnd);
-		wrefresh(w->wnd);
-		delwin(w->wnd);
-		w->wnd = NULL;
+	if (w->win != NULL) {
+		wclear(w->win);
+		wrefresh(w->win);
+		delwin(w->win);
+		w->win = NULL;
 
 		w->startx = -1;
 		w->starty = -1;
