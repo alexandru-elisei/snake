@@ -183,10 +183,8 @@ char gph_getkey()
 
 	if (flag_has("game_mode") != 0)
 		ret = tolower(wgetch(chenar.win));
-	else if (flag_has("menu_mode") != 0) {
+	else if (flag_has("menu_mode") != 0)
 		ret = tolower(wgetch(menu.win));
-		wprintw(menu.win, "%c", ret);
-	}
 
 	return ret;
 }
@@ -248,17 +246,19 @@ void gph_draw(struct Unit *snake, int snk_n)
 
 	mvwprintw(chenar.win, small_food.y, small_food.x, "%c", '0');
 
-	if (flag_has("obstacles") == 0) {
-		gen_obstacles(obst1);
-		flag_add("obstacles", 1);
+	if (flag_has("hard_difficulty") != 0) {
+		if (flag_has("obstacles") == 0 && flag_has("hard_difficulty") != 0) {
+			gen_obstacles(obst1);
+			flag_add("obstacles", 1);
 
-		gen_obstacles(obst2);
-		flag_add("obstacles", 2);
-	}
+			gen_obstacles(obst2);
+			flag_add("obstacles", 2);
+		}
 
-	for (i = 0; i < OBST_LEN; i++) {
-		mvwprintw(chenar.win, obst1[i].y, obst1[i].x, "%c", '+');
-		mvwprintw(chenar.win, obst2[i].y, obst2[i].x, "%c", '+');
+		for (i = 0; i < OBST_LEN; i++) {
+			mvwprintw(chenar.win, obst1[i].y, obst1[i].x, "%c", '+');
+			mvwprintw(chenar.win, obst2[i].y, obst2[i].x, "%c", '+');
+		}
 	}
 
 	wrefresh(chenar.win);

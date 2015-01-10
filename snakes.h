@@ -6,7 +6,6 @@
 
 #include "graphics.h"
 
-#define START_LENGTH 8		/* lungimea initiala a sarpelui */
 
 /* Construieste sarpele */
 void snk_init();

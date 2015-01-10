@@ -7,6 +7,9 @@
 #include "graphics.h"
 #include "snakes.h"
 
+#define LENGTH_EASY	 4	/* lungimea initiala la dificultatea easy */
+#define LENGTH_HARD	 8	/* lungimea initiala la dificultatea hard */
+
 static struct Unit *snake;	/* sarpele, duh */
 static char next_dir;		/* Directia de miscare a sarpelui */
 static int snake_len;		/* lungimea curenta a sarpelui */ 
@@ -28,12 +31,6 @@ static void snk_update();
 /* Aici trebuie sa inceapa sa se miste sarpele */
 void snk_init()
 {
-	/* Stupidity check */
-	if (START_LENGTH > MEM_INC) {
-		flag_add("fatal_error", 1);
-		return;
-	}
-
 	/* La pornirea jocului sarpele se misca pe orizontala spre dreapta */
 	creeaza_sarpe();
 	next_dir = RIGHT;
@@ -58,6 +55,7 @@ void snk_addmv(char dir)
 	/* Temporary */
 	snk_update();
 }
+
 
 /* Verifica daca tasta apasata este o directie valida */
 int snk_isdir(char c)
@@ -172,7 +170,17 @@ static void creeaza_sarpe()
 	int x, y;
 	int i;
 
-	snake_len = START_LENGTH;
+	/* Stupidity check */
+	if (flag_has("hard_difficulty") != 0)
+		snake_len = LENGTH_HARD;
+	else
+		snake_len = LENGTH_EASY;
+
+	if (snake_len > MEM_INC) {
+		flag_add("fatal_error", 1);
+		return;
+	}
+	
 	snake_mem = 0;
 	aloca_mem(&snake, &snake_mem);
 

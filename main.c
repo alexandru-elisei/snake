@@ -47,6 +47,7 @@ int main(void)
 			}
 		} else {
 			if (flag_has("dead") != 0) {
+				flag_del("game_mode");
 				getchar();
 				break;
 			}
