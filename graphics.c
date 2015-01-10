@@ -6,8 +6,8 @@
 #include "graphics.h"
 #include "generic.h"
 
-#define CWIN_LENX	30	/* lungimea pe x a chenarului */
-#define CWIN_LENY	25	/* lungimea pe y a chenarului */
+#define CWIN_LENX	20	/* lungimea pe x a chenarului */
+#define CWIN_LENY	20	/* lungimea pe y a chenarului */
 #define SCRWIN_LENY	1	/* inaltimea ferestrei de scor */
 #define MENUWIN_LENY	1	/* inaltimea ferestrei de menu */
 #define PADDING_HORIZ	1	/* horizontal padding */	
@@ -33,7 +33,7 @@ static FILE *f;
 
 /* Antet functii locale/private */
 
-static void destroy_window(WINDOW *win);
+static void destroy_window(struct Fereastra *w);
 
 static int check_terminal_size();
 
@@ -57,13 +57,8 @@ void gph_init()
 		start_color();
 	}
 
-	chenar.wnd = NULL;
-	chenar.startx = -1;
-	chenar.starty = -1;
-
-	menu.wnd = NULL;
-	menu.startx = -1;
-	menu.starty = -1;
+	destroy_window(&chenar);
+	destroy_window(&menu);
 
 	scrwin = NULL;
 }
@@ -76,6 +71,8 @@ void gph_drwborder()
 		flag_add("fatal_error", 1);
 		return;
 	}
+
+	destroy_window(&menu);
 
 	chenar.starty = (LINES - CWIN_LENY) / 2;
 	chenar.startx = (COLS - CWIN_LENX) / 2;
@@ -103,6 +100,8 @@ void gph_drwmenu()
 		flag_add("fatal_error", 1);
 		return;
 	}
+
+	destroy_window(&chenar);
 
 	menu.starty = (LINES - CWIN_LENY) / 2 + MENUWIN_LENY;
 	menu.startx = (COLS - CWIN_LENX) / 2;
@@ -265,20 +264,21 @@ int gph_is_onobstacle(struct Unit *u)
 
 void gph_reset()
 {
-	destroy_window(chenar.wnd);
-	destroy_window(scrwin);
-	destroy_window(menu.wnd);
+	destroy_window(&chenar);
+	destroy_window(&menu);
 
 	endwin();
 }
 
-static void destroy_window(WINDOW *win)
+static void destroy_window(struct Fereastra *w)
 {
-	if (win != NULL) {
-		wborder(win, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
-		wrefresh(win);
-		delwin(win);
+	if (w->wnd != NULL) {
+		wborder(w->wnd, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
+		wrefresh(w->wnd);
+		delwin(w->wnd);
 	}
+	w->startx = -1;
+	w->starty = -1;
 }
 
 /* Genereaza un punct normal pentru sarpe de mancat */
@@ -288,7 +288,8 @@ static void gen_small_food(struct Unit *food)
 		food->x = rand() % (CWIN_LENX - 2) + 1;
 		food->y = rand() % (CWIN_LENY - 2) + 1;
 	} while (snk_is_incolision(food) == 1 ||
-			gph_is_onborder(food) == 1);
+			gph_is_onborder(food) == 1 ||
+			gph_is_onobstacle(food) == 1);
 }
 
 /* Genereaza obstacolele pe ecran */
