@@ -22,7 +22,6 @@ int main(void)
 	char key;
 	fd_set read_descriptors;
 	struct timeval viteza;
-	struct timeval tmp_vit;
 	FILE *f;
 
 	/* Resetting debug file */
@@ -50,51 +49,29 @@ int main(void)
 	viteza.tv_usec = VI_USEC;
 
 	while (FOREVER) {
-
-		/**************************************/
-		fprintf(f, "key = %c\n", key);
-		fflush(f);
-		/**************************************/
-
-		if (gph_is_quitkey(key) == 1) {
-			gph_reset();
-			break;
-		}
-
-		if (flag_has("menu_mode") != 0) {
-			fprintf(f, "Entering menu_mode check\n");
-			fflush(f);
-
-			key = gph_getkey();
-
-			if (gph_is_menukey(key) == 1) {
-				gph_menuact(key);
-				snk_init();
-				error_check("INITIALIZING SNAKE");	
-
-				/* Entering game mode */
-				flag_del("menu_mode");
-				flag_add("game_mode", 1);
-			}
-		} else {
-			fprintf(f, "Entering game_mode check\n");
-			fflush(f);
-
+		
+		if (flag_has("game_mode") != 0) {
 			sel = select(nfds, &read_descriptors, NULL, NULL, &viteza);
+			/* Citesc tasta pe care am apasat-o */
 			if (sel == SELECT_EVENT) {
 				key = gph_getkey();
 
+				/* Ies imediat din joc */
 				if (gph_is_quitkey(key) == 1) {
 					gph_reset();
 					break;
 				}
 			}
 
+			/* Cat timp nu a expirat timpul initial */
 			while (sel != SELECT_TIMEOUT) {
-				sel = select(nfds, &read_descriptors, NULL, NULL, &viteza);
+				sel = select(nfds, &read_descriptors, 
+						NULL, NULL, &viteza);
+				/* Ascult tastatura */
 				if (sel == SELECT_EVENT) {
 					key = gph_getkey();
 
+					/* Ies imediat din joc */
 					if (gph_is_quitkey(key) == 1) {
 						gph_reset();
 						break;
@@ -111,13 +88,32 @@ int main(void)
 			if (snk_isdir(key) == 1)
 				snk_addmv(key);
 
+			FD_SET(0, &read_descriptors);
+
+			viteza.tv_sec = VI_SEC;
+			viteza.tv_usec = VI_USEC;
+
 			snk_move();
+		} else if (flag_has("menu_mode") != 0) {
+			key = gph_getkey();
+
+			/* Ies din joc */
+			if (gph_is_quitkey(key) == 1) {
+				gph_reset();
+				break;
+			}
+
+			if (gph_is_menukey(key) == 1) {
+				gph_menuact(key);
+				snk_init();
+				error_check("INITIALIZING SNAKE");	
+
+				/* Entering game mode */
+				flag_del("menu_mode");
+				flag_add("game_mode", 1);
+			}
 		}
 
-		FD_SET(0, &read_descriptors);
-
-		viteza.tv_sec = VI_SEC;
-		viteza.tv_usec = VI_USEC;
 	}
 
 	gph_reset();
