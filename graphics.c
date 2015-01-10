@@ -7,11 +7,18 @@
 #include "generic.h"
 
 #define CWIN_LENX	30	/* lungimea pe x a chenarului */
-#define CWIN_LENY	30	/* lungimea pe y a chenarului */
+#define CWIN_LENY	25	/* lungimea pe y a chenarului */
+
+/* Do not use values lower than MWIN_LENX = 40, MWIN_LENY = 20 */
+#define MWIN_LENX	40	/* lungimea pe x a ferestrei de meniu */
+#define MWIN_LENY	20	/* lungimea pe y a ferestrei de meniu */
+
 #define SCRWIN_LENY	1	/* inaltimea ferestrei de scor */
 #define MENUWIN_LENY	1	/* inaltimea ferestrei de menu */
+
 #define PADDING_HORIZ	1	/* horizontal padding */	
 #define PADDING_VERT	1	/* vertical padding */	
+
 #define OBST_LEN	6	/* lungimea obstacolelor */	
 
 struct Fereastra {		
@@ -23,7 +30,8 @@ struct Fereastra {
 static struct Fereastra chenar;	/* chenarul */
 static struct Unit small_food;	/* mancarea cu scorul cel mai mic */
 static struct Unit obst1[OBST_LEN],	/* obstacolele */
-		   obst2[OBST_LEN];	/* oamenii care incearca sa prinda sarpele */
+		   obst2[OBST_LEN];	/* oamenii care incearca sa prinda 
+					 * sarpele */
 static WINDOW *scrwin;		/* score window */
 static struct Fereastra menu;	/* menu window */
 
@@ -103,36 +111,32 @@ void gph_drwmenu()
 
 	destroy_window(&chenar);
 
-	menu.starty = (LINES - CWIN_LENY) / 2 + MENUWIN_LENY;
-	menu.startx = (COLS - CWIN_LENX) / 2;
-	menu.win = newwin(CWIN_LENY + MENUWIN_LENY, CWIN_LENX, menu.starty, menu.startx);
+	menu.starty = (LINES - MWIN_LENY) / 2;
+	menu.startx = (COLS - MWIN_LENX) / 2;
+	menu.win = newwin(MWIN_LENY, MWIN_LENX, menu.starty, menu.startx);
 
-	centru_x = (CWIN_LENX - strlen(TITLU)) / 2;
+	centru_x = (MWIN_LENX - strlen(TITLU)) / 2;
 	wattron(menu.win, A_BOLD);
 	mvwprintw(menu.win, 0, centru_x, "%s\n", TITLU);
 	wattroff(menu.win, A_BOLD);
 
-	mvwprintw(menu.win, 2, 0, "Life has been kind to you. You");
-	mvwprintw(menu.win, 3, 0, "have your own backyard, the");
-	mvwprintw(menu.win, 4, 0, "mice are plentiful, and");
-	mvwprintw(menu.win, 5, 0, "sometimes, if you are lucky,");
-	mvwprintw(menu.win, 6, 0, "you catch a rabbit. A pink,");
-	mvwprintw(menu.win, 7, 0, "fluffy rabbit. A very tasty,");
-	mvwprintw(menu.win, 8, 0, "pink, fluffy rabbit.");
+	mvwprintw(menu.win, 2, 0, "Life has been kind to you. You have your");
+	mvwprintw(menu.win, 3, 0, "own backyard, the mice are plentiful,");
+	mvwprintw(menu.win, 4, 0, "and sometimes, if you are lucky, you");
+	mvwprintw(menu.win, 5, 0, "catch a rabbit. A pink, fluffly rabbit.");
+	mvwprintw(menu.win, 6, 0, "A very tasy, pink, fluffy rabbit.");
 
-	mvwprintw(menu.win, 10, 0, "...Until one day. When the");
-	mvwprintw(menu.win, 11, 0, "pesky, nasty, bipedal humans");
-	mvwprintw(menu.win, 12, 0, "saw you in your yard and they");
-	mvwprintw(menu.win, 13, 0, "tried to stop you.");
+	mvwprintw(menu.win, 8, 0, "...Until one day. When the pesky, nasty,");
+	mvwprintw(menu.win, 9, 0, "bipedal humans saw you in your yard and");
+	mvwprintw(menu.win, 10, 0, "they tried to stop you.");
 
-	mvwprintw(menu.win, 15, 0, "Will you manage to ESCAPE THE");
-	mvwprintw(menu.win, 16, 0, "BACKYARD?");
+	mvwprintw(menu.win, 12, 0, "Will you manage to ESCAPE THE BACKYARD?");
 
-	mvwprintw(menu.win, 18, 0, "Choose your game mode:");
-	mvwprintw(menu.win, 19, 0, "1. Baby-snake mode.");
-	mvwprintw(menu.win, 20, 0, "2. Man-snake mode.");
+	mvwprintw(menu.win, 14, 0, "Choose your game mode:");
+	mvwprintw(menu.win, 15, 0, "1. Baby-snake mode.");
+	mvwprintw(menu.win, 16, 0, "2. Man-snake mode.");
 
-	mvwprintw(menu.win, 22, 0, "");
+	mvwprintw(menu.win, 18, 0, "");
 	curs_set(TRUE);
 
 	wrefresh(menu.win);
