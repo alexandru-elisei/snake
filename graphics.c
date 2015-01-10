@@ -14,7 +14,6 @@
 #define MWIN_LENY	20	/* lungimea pe y a ferestrei de meniu */
 
 #define SCRWIN_LENY	1	/* inaltimea ferestrei de scor */
-#define MENUWIN_LENY	1	/* inaltimea ferestrei de menu */
 
 #define PADDING_HORIZ	1	/* horizontal padding */	
 #define PADDING_VERT	1	/* vertical padding */	
@@ -43,7 +42,7 @@ static FILE *f;
 
 static void destroy_window(struct Fereastra *w);
 
-static int check_terminal_size();
+static int check_terminal_size(int lenx, int leny);
 
 static void gen_small_food(struct Unit *food);
 
@@ -75,7 +74,7 @@ void gph_init()
 void gph_drwborder()
 {
 	/* Ma asigur ca am spatiu sa desenez si bara de scor si de meniu */
-	if (check_terminal_size() == 0) {
+	if (check_terminal_size(CWIN_LENX, CWIN_LENY) == 0) {
 		flag_add("fatal_error", 1);
 		return;
 	}
@@ -104,7 +103,7 @@ void gph_drwmenu()
 	int centru_x;
 
 	/* Ma asigur ca am spatiu sa desenez si bara de scor si de meniu */
-	if (check_terminal_size() == 0) {
+	if (check_terminal_size(MWIN_LENX, MWIN_LENY) == 0) {
 		flag_add("fatal_error", 1);
 		return;
 	}
@@ -364,12 +363,12 @@ static void gen_obstacles(struct Unit *o)
 }
 
 /* Verific daca terminalul este indeajuns de mare incat sa desenez pe el */
-static int check_terminal_size()
+static int check_terminal_size(int lenx, int leny)
 {
 
 	/* Ma asigur ca am spatiu sa desenez si bara de scor si de meniu */
-	if (LINES < (CWIN_LENY + SCRWIN_LENY + MENUWIN_LENY + PADDING_VERT * 2)
-		       	|| COLS < (CWIN_LENX + PADDING_HORIZ * 2))
+	if (LINES < leny
+		       	|| COLS < lenx)
 		return 0;
 
 	return 1;
