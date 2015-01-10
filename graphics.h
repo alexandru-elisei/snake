@@ -50,7 +50,7 @@ int gph_is_quitkey(char key);
 void gph_menuact(char key);
 
 /* Deseneaza un sarpe */
-void gph_drwsnk(struct Unit *snake, int snk_n);
+void gph_draw(struct Unit *snake, int snk_n);
 
 /* Detects if the snake ate the small food */
 int gph_is_onsmfood(struct Unit *u);

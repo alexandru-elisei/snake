@@ -233,7 +233,7 @@ void gph_menuact(char key)
 }
 
 /* Deseneaza un sarpe */
-void gph_drwsnk(struct Unit *snake, int snk_n)
+void gph_draw(struct Unit *snake, int snk_n)
 {
 	int i;
 

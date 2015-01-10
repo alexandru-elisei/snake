@@ -130,7 +130,7 @@ static void snk_update()
 		flag_add("to_grow", 1);
 	}
 
-	gph_drwsnk(snake, snake_len);
+	gph_draw(snake, snake_len);
 }
 
 /* Verifica daca o unitate nu apartine sarpelui, pentru a detecta coliziunile*/
