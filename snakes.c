@@ -6,9 +6,7 @@
 #include "generic.h"
 #include "graphics.h"
 #include "snakes.h"
-
-#define LENGTH_EASY	 4	/* lungimea initiala la dificultatea easy */
-#define LENGTH_HARD	 8	/* lungimea initiala la dificultatea hard */
+#include "scores.h"
 
 static struct Unit *snake;	/* sarpele, duh */
 static char next_dir;		/* Directia de miscare a sarpelui */
