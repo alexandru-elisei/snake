@@ -30,8 +30,10 @@ int main(void)
 	while (FOREVER) {
 		key = gph_getkey();
 
-		if (gph_is_quitkey(key) == 1)
+		if (gph_is_quitkey(key) == 1) {
+			gph_reset();
 			break;
+		}
 
 		if (flag_has("menu_mode") != 0) {
 			if (gph_is_menukey(key) == 1) {
@@ -44,14 +46,15 @@ int main(void)
 				flag_add("game_mode", 1);
 			}
 		} else {
-			if (flag_has("dead") != 0)
+			if (flag_has("dead") != 0) {
+				getchar();
 				break;
+			}
 			if (snk_isdir(key) == 1)
 				snk_addmv(key);
 		}
 	}
 
-	getchar();
 	gph_reset();
 
 	return 0;

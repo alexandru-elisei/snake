@@ -96,9 +96,6 @@ void gph_drwborder()
 	if (flag_has("color") != 0) 
 		wattroff(chenar.win, COLOR_PAIR(1));
 
-	flag_del("menu_mode");
-	flag_add("game_mode", 1);
-
 	wrefresh(chenar.win);
 }
 
@@ -140,12 +137,11 @@ void gph_drwmenu()
 	mvwprintw(menu.win, 16, 0, "(%c) Man-snake mode.", MKEY_HARD);
 	mvwprintw(menu.win, 17, 0, "(%c) to quit game.", MKEY_QUIT);
 
-	nocbreak();
 	mvwprintw(menu.win, 19, 0, "");
-	curs_set(TRUE);
 
-	flag_del("game_mode");
-	flag_add("menu_mode", 1);
+	nocbreak();
+	echo();
+	curs_set(TRUE);
 
 	wrefresh(menu.win);
 }
@@ -227,8 +223,8 @@ void gph_menuact(char key)
 		flag_add("hard_difficulty", 1);
 	}
 
-	/* Ascund cursorul si dezactivez modul cooking */
 	cbreak();
+	noecho();
 	curs_set(FALSE);
 }
 
