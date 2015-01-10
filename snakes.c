@@ -144,7 +144,7 @@ int snk_is_incolision(struct Unit *u)		/* pointer catre un element */
 
 	aparitii = 0;
 	for (i = 0; i < snake_len; i++)
-		if (gph_is_eq(u, &snake[i]) == 1)
+		if (EQ(*u, snake[i]) == 1)
 			++aparitii;
 
 	return aparitii;

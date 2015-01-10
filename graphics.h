@@ -10,6 +10,8 @@
 #define LEFT		'a'
 #define RIGHT		'd'
 
+#define EQ(a, b) ((a).x == (b).x && (a).y == (b).y)
+
 struct Unit {			/* need better name for a snake segment */
 	int x, y;		/* coordonatele curente */
 };
@@ -46,8 +48,5 @@ int gph_is_onsmfood(struct Unit *u);
 
 /* Detects if the an item bumped into an obstacle */
 int gph_is_onobstacle(struct Unit *u);
-
-/* Detects if two units have the same coordinates */
-int gph_is_eq(struct Unit *u1, struct Unit *u2);
 
 #endif		/* ifndef GRAPHICS_H */

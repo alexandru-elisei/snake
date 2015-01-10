@@ -232,7 +232,7 @@ int gph_is_onsmfood(struct Unit *u)
 	//fprintf(f, "%s\n", "I have the small food flag.");
 	//fflush(f);
 
-	if (gph_is_eq(u, &small_food) == 1)
+	if (EQ(*u, small_food) == 1)
 		return 1;
 
 	//fprintf(f, "%s\n", "u is not equal to small_food.");
@@ -251,11 +251,11 @@ int gph_is_onobstacle(struct Unit *u)
 
 	if (flag_has("obstacles") != 0) {
 		for (i = 0; i < OBST_LEN; i++)
-			if (gph_is_eq(u, &obst1[i]) == 1)
+			if (EQ(*u, obst1[i]) == 1)
 				return 1;
 		if (flag_has("obstacles") == 2)
 			for (i = 0; i < OBST_LEN; i++)
-				if (gph_is_eq(u, &obst2[i]) == 1)
+				if (EQ(*u, obst2[i]) == 1)
 					return 1;
 	}
 
@@ -270,15 +270,6 @@ void gph_reset()
 	destroy_window(menu.wnd);
 
 	endwin();
-}
-
-/* Verifica daca doua unitati, trimise ca pointer, au aceleasi coordonate */
-int gph_is_eq(struct Unit *u1, struct Unit *u2)
-{
-	if (u1->x == u2->x && u1->y == u2->y)
-		return 1;
-
-	return 0;
 }
 
 static void destroy_window(WINDOW *win)
