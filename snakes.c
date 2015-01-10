@@ -26,8 +26,6 @@ static void creeaza_sarpe();
 
 static void muta_unitate(struct Unit *u, char dir);
 
-static void snk_update();
-
 /* Aici trebuie sa inceapa sa se miste sarpele */
 void snk_init()
 {
@@ -38,7 +36,7 @@ void snk_init()
 	/* Sanity check */
 	flag_del("dead");
 
-	snk_update();
+	snk_move();
 }
 
 /* Adaug miscarea ce se va executa la timer */
@@ -51,9 +49,6 @@ void snk_addmv(char dir)
 	else if (dir == RIGHT && next_dir == LEFT);
 	else if (dir == UP || dir == DOWN || dir == LEFT || dir == RIGHT)
 		next_dir = dir;
-
-	/* Temporary */
-	snk_update();
 }
 
 
@@ -91,7 +86,7 @@ void snk_dead()
 }
 
 /* Genereaza noua pozitie a sarpelui si apoi o deseneaza pe ecran */
-static void snk_update()
+void snk_move()
 {
 	struct Unit poz_viitoare;
 	int i;
