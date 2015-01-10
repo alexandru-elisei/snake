@@ -180,11 +180,14 @@ void gph_printcenter(char *msg)
 char gph_getkey()
 {
 	char ret;
-
+	char buffer[2];
+	
 	if (flag_has("game_mode") != 0)
 		ret = tolower(wgetch(chenar.win));
-	else if (flag_has("menu_mode") != 0)
-		ret = tolower(wgetch(menu.win));
+	else if (flag_has("menu_mode") != 0) {
+		wgetnstr(menu.win, buffer, 1);
+		ret = tolower(buffer[0]);
+	}
 
 	return ret;
 }
@@ -212,7 +215,6 @@ int gph_is_quitkey(char key)
 /* Executa o actiune de meniu */
 void gph_menuact(char key)
 {
-	key = tolower(key);
 	if (key == MKEY_EASY) {
 		flag_del("hard_difficulty");
 		flag_add("easy_difficulty", 1);
