@@ -24,14 +24,7 @@ int main(void)
 	gph_drwmenu();
 	error_check("DRAWING MENU");	
 
-	getchar();
-
-	snk_init();
-	error_check("INITIALIZING SNAKE");	
-
 	//f = fopen(DEB_FILE, "a");
-
-	curs_set(FALSE);
 
 	/*
 	flag_add("dead", 1);
@@ -40,6 +33,13 @@ int main(void)
 		*/
 	while (FOREVER) {
 		key = gph_getkey();
+
+		if (flag_has("menu_mode") != 0) {
+			curs_set(FALSE);
+			snk_init();
+			error_check("INITIALIZING SNAKE");	
+		}
+
 		if (key == 'q' || flag_has("dead") != 0)
 			break;
 		if (snk_isdir(key) == 1)

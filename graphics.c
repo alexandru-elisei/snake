@@ -86,13 +86,16 @@ void gph_drwborder()
 
 	chenar.win = newwin(CWIN_LENY, CWIN_LENX, chenar.starty, chenar.startx);
 
-	//init_color(COLOR_WOOD, 255, 211, 155);
-	init_pair(1, COLOR_RED, COLOR_BLUE);
-	init_pair(2, COLOR_BLACK, COLOR_YELLOW);
-
-	wattron(chenar.win, COLOR_PAIR(1));
+	if (flag_has("color") != 0) {
+		init_pair(1, COLOR_RED, COLOR_BLUE);
+		wattron(chenar.win, COLOR_PAIR(1));
+	}
 	wborder(chenar.win,  '+',  '+', '+', '+', '+', '+', '+', '+');
-	wattroff(chenar.win, COLOR_PAIR(1));
+	if (flag_has("color") != 0) 
+		wattroff(chenar.win, COLOR_PAIR(1));
+
+	flag_del("menu_mode");
+	flag_add("game_mode", 1);
 
 	wrefresh(chenar.win);
 }
@@ -132,14 +135,17 @@ void gph_drwmenu()
 	mvwprintw(menu.win, 12, 0, "Will you manage to ESCAPE THE BACKYARD?");
 
 	mvwprintw(menu.win, 14, 0, "Choose your game mode:");
-	mvwprintw(menu.win, 15, 0, "1. Baby-snake mode.");
-	mvwprintw(menu.win, 16, 0, "2. Man-snake mode.");
+	mvwprintw(menu.win, 15, 0, "(1) Baby-snake mode.");
+	mvwprintw(menu.win, 16, 0, "(2) Man-snake mode.");
+	mvwprintw(menu.win, 17, 0, "(Q) to quit game.");
 
-	mvwprintw(menu.win, 18, 0, "");
+	mvwprintw(menu.win, 19, 0, "");
 	curs_set(TRUE);
 
-	wrefresh(menu.win);
+	flag_del("game_mode");
+	flag_add("menu_mode", 1);
 
+	wrefresh(menu.win);
 }
 
 /* Returneaza 1 daca un punct se afla pe bordaj */
@@ -179,6 +185,8 @@ char gph_getkey()
 
 	if (flag_has("game_mode") != 0)
 		ret = tolower(wgetch(chenar.win));
+	else if (flag_has("menu_mode") != 0)
+		ret = tolower(wgetch(menu.win));
 
 	return ret;
 }

@@ -38,9 +38,6 @@ void snk_init()
 	creeaza_sarpe();
 	next_dir = RIGHT;
 
-	/* Anunt programul ca incep sa ma joc */
-	flag_add("game_mode", 1);
-
 	/* Sanity check */
 	flag_del("dead");
 
