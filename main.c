@@ -5,8 +5,6 @@
 #include "graphics.h"
 #include "snakes.h"
 
-/* Antet functii */
-
 void error_check(char *msg);
 
 int main(void)
@@ -18,14 +16,21 @@ int main(void)
 	f = fopen(DEB_FILE, "w");
 	fclose(f);
 
+	gph_init();
+
 	flag_init();
 	error_check("INITIALIZING FLAGS");	
-
-	gph_init();
 
 	gph_drwmenu();
 	error_check("DRAWING MENU");	
 
+	//f = fopen(DEB_FILE, "a");
+
+	/*
+	flag_add("dead", 1);
+	if (flag_has("dead") != 0)
+		fprintf(f, "\nRegistering dead\n");
+		*/
 	while (FOREVER) {
 		key = gph_getkey();
 
@@ -33,16 +38,39 @@ int main(void)
 			curs_set(FALSE);
 			snk_init();
 			error_check("INITIALIZING SNAKE");	
-		} else {
-			if (key == 'q' || flag_has("dead") != 0)
-				break;
-			if (snk_isdir(key) == 1)
-				snk_addmv(key);
 		}
+
+		if (key == 'q' || flag_has("dead") != 0)
+			break;
+		if (snk_isdir(key) == 1)
+			snk_addmv(key);
 	}
+	
+	/*
+	fprintf(f, "\nExited infinte loop\n");
+	fclose(f);
+	*/
 
 	getchar();
+
 	gph_reset();
+
+
+	/*
+	flag_init();
+
+	flag_add("test", 1);
+	printf("%d\n", flag_has("test"));
+
+	flag_add("test", 2);
+	printf("%d\n", flag_has("test"));
+
+	flag_add("other", 2);
+	printf("%d\n", flag_has("other"));
+
+	flag_del("test");
+	printf("%d\n", flag_has("test"));
+	*/
 
 	return 0;
 }
