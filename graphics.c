@@ -6,8 +6,8 @@
 #include "graphics.h"
 #include "generic.h"
 
-#define CWIN_LENX	20	/* lungimea pe x a chenarului */
-#define CWIN_LENY	20	/* lungimea pe y a chenarului */
+#define CWIN_LENX	30	/* lungimea pe x a chenarului */
+#define CWIN_LENY	30	/* lungimea pe y a chenarului */
 #define SCRWIN_LENY	1	/* inaltimea ferestrei de scor */
 #define MENUWIN_LENY	1	/* inaltimea ferestrei de menu */
 #define PADDING_HORIZ	1	/* horizontal padding */	
@@ -41,7 +41,7 @@ static void gen_small_food(struct Unit *food);
 
 static void gen_obstacles(struct Unit *o);	/* pointer de unitati */
 
-/* Basic construct-type function */
+/* Basic constructor-type function */
 void gph_init()
 {
 	initscr();
@@ -273,12 +273,14 @@ void gph_reset()
 static void destroy_window(struct Fereastra *w)
 {
 	if (w->wnd != NULL) {
-		wborder(w->wnd, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
+		wclear(w->wnd);
 		wrefresh(w->wnd);
 		delwin(w->wnd);
+		w->wnd = NULL;
+
+		w->startx = -1;
+		w->starty = -1;
 	}
-	w->startx = -1;
-	w->starty = -1;
 }
 
 /* Genereaza un punct normal pentru sarpe de mancat */
