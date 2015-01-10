@@ -32,6 +32,7 @@ int main(void)
 	//f = fopen(DEB_FILE, "a");
 
 	curs_set(FALSE);
+
 	/*
 	flag_add("dead", 1);
 	if (flag_has("dead") != 0)

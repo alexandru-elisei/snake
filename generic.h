@@ -16,7 +16,6 @@
 
 #define ERROR(msg) printf("\n** FATAL ERROR %s **\n\n", (msg))
 
-
 /*
  * Propria mea functie de citire a sirurilor de caractere
  * Conform GNU:
