@@ -4,8 +4,7 @@
 
 #define SNAKES_H
 
-#define LENGTH_EASY	 4	/* lungimea initiala la dificultatea easy */
-#define LENGTH_HARD	 8	/* lungimea initiala la dificultatea hard */
+#include "graphics.h"
 
 /* Construieste sarpele */
 void snk_init();

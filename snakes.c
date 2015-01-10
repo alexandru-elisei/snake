@@ -6,7 +6,9 @@
 #include "generic.h"
 #include "graphics.h"
 #include "snakes.h"
-#include "scores.h"
+
+#define LENGTH_EASY	 4	/* lungimea initiala la dificultatea easy */
+#define LENGTH_HARD	 8	/* lungimea initiala la dificultatea hard */
 
 static struct Unit *snake;	/* sarpele, duh */
 static char next_dir;		/* Directia de miscare a sarpelui */
@@ -62,9 +64,6 @@ int snk_isdir(char c)
 /* Destructor-type function */
 void snk_reset()
 {
-	/* Nu mai ma joc */
-	flag_del("game_mode");
-
 	/* Distrug sarpele */
 	snake_len = 0;
 	snake_mem = 0;
