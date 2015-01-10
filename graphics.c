@@ -20,6 +20,10 @@
 
 #define OBST_LEN	6	/* lungimea obstacolelor */	
 
+#define MKEY_BABY	'1'	/* dificultate meniu usoara (baby-snake) */
+#define MKEY_MAN	'2'	/* dificultatea meniu grea (man-snake) */
+#define MKEY_QUIT	'q'	/* tasta de iesit din joc */
+
 struct Fereastra {		
 	WINDOW *win;		/* fereastra in care se misca sarpele */
 	int startx;		/* abscisa bordajului */
@@ -73,7 +77,6 @@ void gph_init()
 /* Deseneaza chenarul in care se poate misca sarpele */
 void gph_drwborder()
 {
-	/* Ma asigur ca am spatiu sa desenez si bara de scor si de meniu */
 	if (check_terminal_size(CWIN_LENX, CWIN_LENY) == 0) {
 		flag_add("fatal_error", 1);
 		return;
@@ -83,11 +86,10 @@ void gph_drwborder()
 
 	chenar.starty = (LINES - CWIN_LENY) / 2;
 	chenar.startx = (COLS - CWIN_LENX) / 2;
-
 	chenar.win = newwin(CWIN_LENY, CWIN_LENX, chenar.starty, chenar.startx);
 
 	if (flag_has("color") != 0) {
-		init_pair(1, COLOR_RED, COLOR_BLUE);
+		init_pair(1, COLOR_RED, COLOR_YELLOW);
 		wattron(chenar.win, COLOR_PAIR(1));
 	}
 	wborder(chenar.win,  '+',  '+', '+', '+', '+', '+', '+', '+');
@@ -105,7 +107,6 @@ void gph_drwmenu()
 {
 	int centru_x;
 
-	/* Ma asigur ca am spatiu sa desenez si bara de scor si de meniu */
 	if (check_terminal_size(MWIN_LENX, MWIN_LENY) == 0) {
 		flag_add("fatal_error", 1);
 		return;
@@ -190,6 +191,14 @@ char gph_getkey()
 
 	return ret;
 }
+
+/* Returneaza 1 daca o tasta e tasta valida pentru meniu */
+int gph_is_menukey(char key)
+{}
+
+/* Returneaza 1 daca am apasat quit */
+int gph_is_quitkey(char key)
+{}
 
 /* Deseneaza un sarpe */
 void gph_drwsnk(struct Unit *snake, int snk_n)

@@ -40,6 +40,12 @@ void gph_getcenter(int *x, int *y);
 /* Citeste o directie */
 char gph_getkey();
 
+/* Returneaza 1 daca o tasta e tasta valida pentru meniu */
+int gph_is_menukey(char key);
+
+/* Returneaza 1 daca am apasat quit */
+int gph_is_quitkey(char key);
+
 /* Deseneaza un sarpe */
 void gph_drwsnk(struct Unit *snake, int snk_n);
 
