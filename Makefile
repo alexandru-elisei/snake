@@ -7,6 +7,7 @@ PROG = snake
 HEADER = 	generic.h		\
 	 	graphics.h		\
 	 	snakes.h		\
+	 	scores.h		\
 		flags.h
 SOURCES = 	$(HEADER:%.h=%.c)	\
 		main.c			
