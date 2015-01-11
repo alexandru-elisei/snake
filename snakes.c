@@ -68,7 +68,7 @@ void snk_dead()
 	snk_reset();
 	flag_add("dead", 1);
 	gph_drwgame();
-	gph_printcenter("** YOU ARE DEAD **");
+	gph_printcenter("** DEAD **");
 }
 
 /* Genereaza noua pozitie a sarpelui si apoi o deseneaza pe ecran */

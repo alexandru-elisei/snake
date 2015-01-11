@@ -27,6 +27,8 @@ void query_select(int sel, char *key);
 
 void calculate_speed(struct timeval *v);
 
+void return_to_menu();
+
 int main(void)
 {
 	int nfds;
@@ -73,12 +75,7 @@ int main(void)
 			/* Ies imediat din joc in meniu */
 			if (gph_is_quitkey(key) == 1) {
 				snk_reset();
-
-				gph_drwmenu();
-				error_check("DRAWING MENU (Terminal too small?)");	
-
-				flag_del("game_mode");
-				flag_add("menu_mode", 1);
+				return_to_menu();
 			}
 
 			/* Daca nu am apasat q */
@@ -97,12 +94,6 @@ int main(void)
 					error_check("DURING SELECT");
 				}
 
-				if (flag_has("dead") != 0) {
-					flag_del("game_mode");
-					getchar();
-					break;
-				}
-
 				snk_move(key);
 				error_check("DRAWING SNAKE (Not enough memory?)");
 
@@ -112,6 +103,16 @@ int main(void)
 				FD_SET(0, &read_descriptors);
 
 				calculate_speed(&viteza);	
+
+				if (flag_has("dead") != 0) {
+					if (score_get() > score_high()) {
+						flag_del("game_mode");
+						flag_add("newhigh_mode", 1);
+					} else {
+						gph_getkey();
+						return_to_menu();
+					}
+				}
 			}
 				
 		} else if (flag_has("menu_mode") != 0) {
@@ -183,4 +184,14 @@ void calculate_speed(struct timeval *v)
 
 	if (v->tv_usec < VMAX_USEC)
 		v->tv_usec = VMAX_USEC;
+}
+
+/* Obviously */
+void return_to_menu()
+{
+	gph_drwmenu();
+	error_check("DRAWING MENU (Terminal too small?)");	
+
+	flag_del("game_mode");
+	flag_add("menu_mode", 1);
 }

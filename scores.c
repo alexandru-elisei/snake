@@ -48,9 +48,6 @@ void score_init()
 
 		serializeaza();
 	}
-
-	fprintf(deb, "score_init - sfarsit, high.name = %s, high.score = %d\n", high.name, high.score);
-	fflush(deb);
 }
 
 /* Creste scorul */
