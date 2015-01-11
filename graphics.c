@@ -1,3 +1,4 @@
+
 /* Deseneaza pe ecran grafica jocului */
 
 #include <time.h>
@@ -7,8 +8,8 @@
 #include "generic.h"
 #include "scores.h"
 
-#define CHENAR_LENX	30	/* lungimea pe x a chenarului */
-#define CHENAR_LENY	25	/* lungimea pe y a chenarului */
+#define CHENAR_LENX	25	/* lungimea pe x a chenarului */
+#define CHENAR_LENY	20	/* lungimea pe y a chenarului */
 
 #define CHENAR_CHX	'+'	/* caracterul pe x pentru chenar */
 #define CHENAR_CHY	'+'	/* caracterul pe y pentru chenar */

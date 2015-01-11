@@ -1,6 +1,5 @@
-/*
- * Semnalizeaza diferite evenimente
- */
+
+/* Retine stari/evenimente ce au loc pe parcursul programului */
 
 #ifndef FLAGS_H
 

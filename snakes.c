@@ -1,3 +1,4 @@
+
 /* Controloaza miscarea sarpelui pe ecran */
 
 #include <stdlib.h>

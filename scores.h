@@ -1,3 +1,6 @@
+
+/* Tine evidenta scorului curent si al scorului maxim */
+
 #ifndef SCORES_H
 
 #define SCORES_H

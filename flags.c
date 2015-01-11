@@ -1,3 +1,6 @@
+
+/* Retine stari/evenimente ce au loc pe parcursul programului */
+
 #include <string.h>
 #include <stdio.h>
 #include "generic.h"

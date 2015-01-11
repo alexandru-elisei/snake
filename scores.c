@@ -1,9 +1,22 @@
+
+/* Tine evidenta scorului curent si al scorului maxim */
+
+#include <stdlib.h>
+#include <stdlib.h>
 #include "scores.h"
 #include "flags.h"
 #include "generic.h"
 
+#define SCORE_FILE	"data.bin"
+
+struct HighScore {
+	char *nume;
+	int score;
+};
+
 static int points;	/* scorul curent */
 static int level;	/* nivelul curent */
+static HighScore high;
 
 /* Constructor */
 void score_init()

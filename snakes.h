@@ -1,3 +1,4 @@
+
 /* Controleaza miscarea sarpelui pe ecran */
 
 #ifndef SNAKES_H
