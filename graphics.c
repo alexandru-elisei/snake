@@ -18,6 +18,9 @@
 #define MENU_LENX	40	/* lungimea pe x a ferestrei de meniu */
 #define MENU_LENY	25	/* lungimea pe y a ferestrei de meniu */
 
+/* Do not use values lower than SCORE_LENY = 7 */
+#define SCORE_LENY	7	/* lungimea pe y a ferestrei de meniu */
+
 #define SCRBAR_LENY	1	/* inaltimea barei de scor */
 #define MENUBAR_LENY	1	/* inaltimea barei de meniu */
 
@@ -30,7 +33,8 @@
 #define MKEY_EASY	'1'	/* dificultate meniu usoara (baby-snake) */
 #define MKEY_HARD	'2'	/* dificultatea meniu grea (man-snake) */
 #define MKEY_QUIT	'q'	/* tasta de iesit din joc */
-#define MKEY_HIGH	's'	/* tasta de iesit din joc */
+#define MKEY_HIGH	's'	/* tasta de vizualizat scorul */
+#define SKEY_RETURN	'r'	/* tasta de iesit din fereastra de scor */
 
 struct MenuWin {		
 	WINDOW *win;		/* fereastra in care se afiseaza meniul */
@@ -91,6 +95,7 @@ void gph_init()
 
 	destroy_window(&game.win);
 	destroy_window(&menu.win);
+	destroy_window(&score.win);
 
 
 }
@@ -174,7 +179,35 @@ void gph_drwmenu()
 
 /* Deseneaza fereastra de scor */
 void gph_drwscore()
-{}
+{
+	char titlu[] = "** HIGH SCORE **";
+	
+	if (check_terminal_size(CHENAR_LENX, SCORE_LENY) == 0) {
+		flag_add("fatal_error", 1);
+		return;
+	}
+
+	score.startx = (COLS - CHENAR_LENX) / 2;
+	score.starty = (LINES - SCORE_LENY) / 2;
+	score.win = newwin(SCORE_LENY, CHENAR_LENX, score.starty, score.startx);
+
+	wclear(score.win);
+
+	if (flag_has("color") != 0) {
+		init_pair(1, COLOR_RED, COLOR_BLACK);
+		wattron(score.win, COLOR_PAIR(1)|A_BOLD);
+	}
+
+	mvwprintw(score.win, 1, (CHENAR_LENX - strlen(titlu)) / 2, "%s", titlu);
+	mvwprintw(score.win, 3, 2, "%s: %d", score_highname(), score_high()); 
+
+	if (flag_has("color") != 0)
+		wattroff(score.win, COLOR_PAIR(1)|A_BOLD);
+
+	mvwprintw(score.win, 5, 2, "(%c) to return to menu", SKEY_RETURN);
+
+	wrefresh(score.win);
+}
 
 /* Returneaza 1 daca un punct se afla pe bordaj */
 int gph_is_onborder(struct Unit *p)
@@ -224,13 +257,12 @@ char gph_getkey()
 	}
 
 	return ret;
-}
-
+} 
 /* Returneaza 1 daca o tasta e tasta valida pentru meniu */
 int gph_is_menukey(char key)
 {
 	key = tolower(key);
-	if (key == MKEY_EASY || key == MKEY_HARD)
+	if (key == MKEY_EASY || key == MKEY_HARD || key == MKEY_HIGH)
 		return 1;
 
 	return 0;
@@ -255,6 +287,9 @@ void gph_menuact(char key)
 	} else if (key == MKEY_HARD) {
 		flag_del("easy_difficulty");
 		flag_add("hard_difficulty", 1);
+	} else if (key == MKEY_HIGH) {
+		flag_del("menu_mode");
+		flag_add("showhigh_mode", 1);
 	}
 
 	cbreak();
