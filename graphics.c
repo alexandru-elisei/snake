@@ -10,13 +10,13 @@
 #define CHENAR_LENY	25	/* lungimea pe y a chenarului */
 
 #define CHENAR_CHX	'+'	/* caracterul pe x pentru chenar */
-#define CHENAR_CHY	'#'	/* caracterul pe y pentru chenar */
+#define CHENAR_CHY	'+'	/* caracterul pe y pentru chenar */
 
 /* Do not use values lower than MWIN_LENX = 40, MWIN_LENY = 20 */
 #define MWIN_LENX	40	/* lungimea pe x a ferestrei de meniu */
 #define MWIN_LENY	20	/* lungimea pe y a ferestrei de meniu */
 
-#define SCRWIN_LENY	1	/* inaltimea ferestrei de scor */
+#define SCRBAR_LENY	1	/* inaltimea barei de scor */
 #define MENUBAR_LENY	1	/* inaltimea barei de meniu */
 
 #define PADDING_HORIZ	1	/* horizontal padding */	
@@ -54,6 +54,12 @@ static FILE *f;
 
 /* Antet functii locale/private */
 
+static void draw_border();
+
+static void draw_score();
+
+static void draw_menubar();
+
 static void destroy_window(WINDOW **w);
 
 static int check_terminal_size(int lenx, int leny);
@@ -88,7 +94,7 @@ void gph_init()
 void gph_drwgame()
 {
 	game.dimx = CHENAR_LENX;
-	game.dimy = CHENAR_LENY + SCRWIN_LENY + MENUBAR_LENY;
+	game.dimy = CHENAR_LENY + SCRBAR_LENY + MENUBAR_LENY;
 
 	if (check_terminal_size(game.dimx + 2 * PADDING_HORIZ,
 			       game.dimy + 2 * PADDING_VERT) == 0) {
@@ -104,33 +110,9 @@ void gph_drwgame()
 
 	game.chenar_startx = 0;
 	/* Las spatiu deasupra chenarului sa scriu scorul */
-	game.chenar_starty = SCRWIN_LENY;
+	game.chenar_starty = SCRBAR_LENY;
 
-	if (flag_has("color") != 0) {
-		init_pair(1, COLOR_RED, COLOR_YELLOW);
-		wattron(game.win, COLOR_PAIR(1));
-	}
-
-	f = fopen(DEB_FILE, "a");
-	fprintf(f, "\n\ngame.dimx = %d, game.dimy = %d\n", game.dimx, game.dimy);
-	fprintf(f, "game.startx = %d, game.starty = %d\n", game.startx, game.starty);
-	fprintf(f, "game.chenar_startx = %d, game.chenar_starty = %d\n", game.chenar_startx,
-			game.chenar_starty);
-	fflush(f);
-
-	/* Desenez liniile orizontale */
-	mvwhline(game.win, game.chenar_starty, game.chenar_startx,
-		       	CHENAR_CHX, CHENAR_LENX);
-	mvwhline(game.win, game.chenar_starty + CHENAR_LENY - 1, game.chenar_startx,
-			CHENAR_CHX, CHENAR_LENX);
-	/* Desenez liniile verticale */
-	mvwvline(game.win, game.chenar_starty + 1, game.chenar_startx,
-			CHENAR_CHY, CHENAR_LENY - 2);
-	mvwvline(game.win, game.chenar_starty + 1, game.chenar_startx + CHENAR_LENX - 1,
-			CHENAR_CHY, CHENAR_LENY - 2);
-
-	if (flag_has("color") != 0) 
-		wattroff(game.win, COLOR_PAIR(1));
+	draw_border();	
 
 	wrefresh(game.win);
 }
@@ -453,3 +435,33 @@ static int check_terminal_size(int lenx, int leny)
 
 	return 1;
 }
+
+/* Deseneaza chenarul */
+static void draw_border()
+{
+	if (flag_has("color") != 0) {
+		init_pair(1, COLOR_RED, COLOR_YELLOW);
+		wattron(game.win, COLOR_PAIR(1));
+	}
+
+	/* Desenez liniile orizontale */
+	mvwhline(game.win, game.chenar_starty, game.chenar_startx,
+		       	CHENAR_CHX, CHENAR_LENX);
+	mvwhline(game.win, game.chenar_starty + CHENAR_LENY - 1, game.chenar_startx,
+			CHENAR_CHX, CHENAR_LENX);
+	/* Desenez liniile verticale */
+	mvwvline(game.win, game.chenar_starty + 1, game.chenar_startx,
+			CHENAR_CHY, CHENAR_LENY - 2);
+	mvwvline(game.win, game.chenar_starty + 1, game.chenar_startx + CHENAR_LENX - 1,
+			CHENAR_CHY, CHENAR_LENY - 2);
+
+	if (flag_has("color") != 0) 
+		wattroff(game.win, COLOR_PAIR(1));
+}
+
+/*
+static void draw_score(struct MenuWin m);
+
+static void draw_menubar(struct MenuWin m);
+*/
+
