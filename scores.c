@@ -1,8 +1,6 @@
 
 /* Tine evidenta scorului curent si al scorului maxim */
 
-#include <stdlib.h>
-#include <stdlib.h>
 #include "scores.h"
 #include "flags.h"
 #include "generic.h"
@@ -14,15 +12,36 @@ struct HighScore {
 	int score;
 };
 
-static int points;	/* scorul curent */
-static int level;	/* nivelul curent */
-static HighScore high;
+static int points;		/* scorul curent */
+static int level;		/* nivelul curent */
+static struct HighScore high;	/* scorul maxim */
+
+/*************************************************/
+FILE *deb;
+/*************************************************/
+
+/* Antet metode private */
+
+void serializeaza();
+
+int deserializeaza();
 
 /* Constructor */
 void score_init()
 {
 	points = 0;
 	level = 0;
+
+	/* Daca fisierul nu exista, il creez */
+	if (deserializeaza() == 0) {
+
+		high.nume = strdup("Darth Sidious");
+		high.score = 0;
+
+		serializeaza();
+	} else {
+		deserializeaza();
+	}
 }
 
 /* Creste scorul */
@@ -50,3 +69,38 @@ int score_lvl()
 {
 	return level;
 }
+
+/* Salveaza scorul high in fisier */
+void serializeaza()
+{
+	FILE *f;
+	int lg_nume;
+
+	f = fopen(SCORE_FILE, "wb");
+
+	lg_nume = strlen(high.nume) + 1;
+	fwrite(&lg_nume, sizeof(int), 1, f);
+	fwrite(&high.nume, lg_nume * sizeof(char), 1, f);
+	fwrite(&high.score, sizeof(int), 1, f);
+	fclose(f);
+}
+
+
+int deserializeaza()
+{
+	FILE *f;
+	int lg_nume;
+
+	f = fopen(SCORE_FILE, "rb");
+	if (f == NULL)
+		return 0;
+
+	fread(&lg_nume, sizeof(int), 1, f);
+	high.nume = (char *) malloc(lg_nume * sizeof(char));
+	fread(&(high.nume), lg_nume * sizeof(char), 1, f);
+	fread(&high.score, sizeof(int), 1, f);
+
+	return 1;
+}
+
+
