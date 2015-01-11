@@ -106,10 +106,8 @@ int main(void)
 				snk_move(key);
 				error_check("DRAWING SNAKE (Not enough memory?)");
 
-				if (flag_has("lvlup") != 0) {
-					fprintf(f, "next level, yay!\n");
+				if (flag_has("lvlup") != 0)
 					flag_del("lvlup");
-				}
 
 				FD_SET(0, &read_descriptors);
 

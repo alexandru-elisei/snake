@@ -334,7 +334,8 @@ void gph_draw(struct Unit *snake, int snk_n)
 	mvwprintw(game.win, small_food.y, small_food.x, "%c", '0');
 
 	if (flag_has("hard_difficulty") != 0) {
-		if (flag_has("obstacles") == 0 && flag_has("hard_difficulty") != 0) {
+		if (flag_has("obstacles") == 0 ||
+				flag_has("lvlup") != 0) {
 			gen_obstacles(obst1);
 			flag_add("obstacles", 1);
 
