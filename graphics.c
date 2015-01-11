@@ -508,7 +508,7 @@ static void gen_obstacles(struct Unit *o)
 		 * mijloc. Daca e orizontal centrul cel mai din stanga are 
 		 * x = 3 si cel mai din dreapta x = CHENAR_LENX - 4 */
 		if (obst_oriz == 1) {
-			centru.x = rand() % (CHENAR_LENX - OBST_LEN - 2) + OBST_LEN / 2 + 1;
+			centru.x = rand() % (game.chenar_startx - OBST_LEN - 2) + OBST_LEN / 2 + 1;
 			centru.y = rand() % (CHENAR_LENY - 2) + 1;
 
 			for (i = OBST_LEN / 2; i > 0; i--) {
@@ -523,7 +523,7 @@ static void gen_obstacles(struct Unit *o)
 			}
 		} else {
 			centru.x = rand() % (CHENAR_LENX - 2) + 1;
-			centru.y = rand() % (CHENAR_LENY - OBST_LEN - 2) + OBST_LEN / 2 + 1;
+			centru.y = rand() % (game.chenar_starty - OBST_LEN - 2) + OBST_LEN / 2 + 1;
 
 			for (i = OBST_LEN / 2; i > 0; i--) {
 				o[OBST_LEN / 2 - i].y = centru.y - i;
