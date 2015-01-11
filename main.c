@@ -62,50 +62,59 @@ int main(void)
 	viteza.tv_usec = VI_USEC;
 
 	while (FOREVER) {
-		
+		/* Daca sunt in modul de joc */	
 		if (flag_has("game_mode") != 0) {
 			/* Ascult tastatura */
 			sel = select(nfds, &read_descriptors, NULL, NULL, 
 					&viteza);
 			query_select(sel, &key);
-
-			/* Ies imediat din joc */
-			if (gph_is_quitkey(key) == 1)
-				break;
-
 			error_check("DURING SELECT");
 
-			/* Cat timp nu a expirat timpul */
-			while (sel != SELECT_TIMEOUT) {
-				/* Ascult tastatura */
-				sel = select(nfds, &read_descriptors, NULL, NULL,
-					       	&viteza);
-				query_select(sel, &key);
+			/* Ies imediat din joc in meniu */
+			if (gph_is_quitkey(key) == 1) {
+				snk_reset();
 
-				/* Ies imediat din joc */
-				if (gph_is_quitkey(key) == 1)
-					break;
+				gph_drwmenu();
+				error_check("DRAWING MENU (Terminal too small?)");	
 
-				error_check("DURING SELECT");
-			}
-
-			if (flag_has("dead") != 0) {
 				flag_del("game_mode");
-				getchar();
-				break;
+				flag_add("menu_mode", 1);
 			}
 
-			snk_move(key);
-			error_check("DRAWING SNAKE (Not enough memory?)");
+			/* Daca nu am apasat q */
+			if (flag_has("game_mode") != 0) {
+				/* Cat timp nu a expirat timpul */
+				while (sel != SELECT_TIMEOUT) {
+					/* Ascult tastatura */
+					sel = select(nfds, &read_descriptors, 
+							NULL, NULL, &viteza);
+					query_select(sel, &key);
 
-			if (flag_has("lvlup") != 0) {
-				fprintf(f, "next level, yay!\n");
-				flag_del("lvlup");
+					/* Ies imediat din joc */
+					if (gph_is_quitkey(key) == 1)
+						break;
+
+					error_check("DURING SELECT");
+				}
+
+				if (flag_has("dead") != 0) {
+					flag_del("game_mode");
+					getchar();
+					break;
+				}
+
+				snk_move(key);
+				error_check("DRAWING SNAKE (Not enough memory?)");
+
+				if (flag_has("lvlup") != 0) {
+					fprintf(f, "next level, yay!\n");
+					flag_del("lvlup");
+				}
+
+				FD_SET(0, &read_descriptors);
+
+				calculate_speed(&viteza);	
 			}
-
-			FD_SET(0, &read_descriptors);
-
-			calculate_speed(&viteza);	
 				
 		} else if (flag_has("menu_mode") != 0) {
 			key = gph_getkey();
@@ -130,6 +139,7 @@ int main(void)
 
 		} else if (flag_has("showhigh_mode") != 0) {
 			key = gph_getkey();
+
 			/* Ies din showhigh_mode si intru in menu_mode */
 			if (gph_execute(key) == 1 && flag_has("showhigh_mode") == 0) {
 				gph_drwmenu();
@@ -145,7 +155,7 @@ int main(void)
 	return 0;
 }
 
-/* Verifica erorile fatale */
+/* Verifica erorile erorile */
 void error_check(char *msg)
 {
 	if (flag_has("fatal_error") != 0) {

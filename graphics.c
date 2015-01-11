@@ -295,7 +295,6 @@ int gph_execute(char key)
 
 			/* Entering game mode */
 			flag_del("menu_mode");
-			flag_add("game_mode", 1);
 		} else if (key == MKEY_HIGH) {
 			flag_del("menu_mode");
 			flag_add("showhigh_mode", 1);
@@ -524,6 +523,6 @@ static void draw_scorebar()
 
 static void draw_menubar(struct MenuWin m)
 {
-	mvwprintw(game.win, game.dimy - 1, 0, "Q: EXIT GAME");
+	mvwprintw(game.win, game.dimy - 1, 0, "Q: RETURN TO MENU");
 }
 
