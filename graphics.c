@@ -51,6 +51,7 @@ static struct Unit obst1[OBST_LEN],	/* obstacolele */
 		   obst2[OBST_LEN];	/* oamenii care incearca sa prinda 
 					 * sarpele */
 static struct MenuWin menu;	/* menu window */
+static struct MenuWin score;	/* score window */
 
 /*********************************************/
 static FILE *f;
@@ -60,7 +61,7 @@ static FILE *f;
 
 static void draw_border();
 
-static void draw_score();
+static void draw_scorebar();
 
 static void draw_menubar();
 
@@ -117,7 +118,7 @@ void gph_drwgame()
 	game.chenar_starty = SCRBAR_LENY;
 
 	draw_border();	
-	draw_score();
+	draw_scorebar();
 	draw_menubar();
 
 	wrefresh(game.win);
@@ -171,6 +172,10 @@ void gph_drwmenu()
 	wrefresh(menu.win);
 }
 
+/* Deseneaza fereastra de scor */
+void gph_drwscore()
+{}
+
 /* Returneaza 1 daca un punct se afla pe bordaj */
 int gph_is_onborder(struct Unit *p)
 {
@@ -207,7 +212,7 @@ char gph_getkey()
 {
 	char ret;
 	char buffer[2];
-	int x, y;
+	int y, x;
 	
 	if (flag_has("game_mode") != 0)
 		ret = tolower(wgetch(game.win));
@@ -471,7 +476,7 @@ static void draw_border()
 }
 
 /* Printeaza scorul curent */
-static void draw_score()
+static void draw_scorebar()
 {
 	mvwprintw(game.win, 0, 0, "LEVEL: %d", score_lvl());
 	mvwprintw(game.win, 0, game.dimx - SCORE_LEN, "SCORE: %d", score_get());

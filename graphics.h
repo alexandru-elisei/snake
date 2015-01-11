@@ -26,6 +26,9 @@ void gph_drwgame();
 /* Deseneaza meniul */
 void gph_drwmenu();
 
+/* Deseneaza fereastra de scor */
+void gph_drwscore();
+
 /* Returneaza 1 daca un punct se afla pe bordaj */
 int gph_is_onborder(struct Unit *p);
 
