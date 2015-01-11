@@ -3,6 +3,7 @@
 #include "flags.h"
 #include "graphics.h"
 #include "snakes.h"
+#include "scores.h"
 
 #define SELECT_ERROR	-1	/* eroare la executia functiei select */
 #define SELECT_EVENT	1	/* s-a apasat o tasta */
@@ -105,6 +106,7 @@ int main(void)
 
 			if (gph_is_menukey(key) == 1) {
 				gph_menuact(key);
+				score_init();
 				snk_init();
 				error_check("INITIALIZING SNAKE");	
 
