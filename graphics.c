@@ -5,6 +5,7 @@
 #include "snakes.h"
 #include "graphics.h"
 #include "generic.h"
+#include "scores.h"
 
 #define CHENAR_LENX	30	/* lungimea pe x a chenarului */
 #define CHENAR_LENY	25	/* lungimea pe y a chenarului */
@@ -23,6 +24,7 @@
 #define PADDING_VERT	1	/* vertical padding */	
 
 #define OBST_LEN	6	/* lungimea obstacolelor */	
+#define SCORE_LEN	14	/* lungimea textului scor */	
 
 #define MKEY_EASY	'1'	/* dificultate meniu usoara (baby-snake) */
 #define MKEY_HARD	'2'	/* dificultatea meniu grea (man-snake) */
@@ -113,6 +115,7 @@ void gph_drwgame()
 	game.chenar_starty = SCRBAR_LENY;
 
 	draw_border();	
+	draw_score();
 
 	wrefresh(game.win);
 }
@@ -134,7 +137,8 @@ void gph_drwmenu()
 	menu.win = newwin(MWIN_LENY, MWIN_LENX, menu.starty, menu.startx);
 
 	centru_x = (MWIN_LENX - strlen(TITLU)) / 2;
-	wattron(menu.win, A_BOLD); mvwprintw(menu.win, 0, centru_x, "%s\n", TITLU);
+	wattron(menu.win, A_BOLD); 
+	mvwprintw(menu.win, 0, centru_x, "%s\n", TITLU);
 	wattroff(menu.win, A_BOLD);
 
 	mvwprintw(menu.win, 2, 0, "Life has been kind to you. You have your");
@@ -449,6 +453,7 @@ static void draw_border()
 		       	CHENAR_CHX, CHENAR_LENX);
 	mvwhline(game.win, game.chenar_starty + CHENAR_LENY - 1, game.chenar_startx,
 			CHENAR_CHX, CHENAR_LENX);
+
 	/* Desenez liniile verticale */
 	mvwvline(game.win, game.chenar_starty + 1, game.chenar_startx,
 			CHENAR_CHY, CHENAR_LENY - 2);
@@ -459,9 +464,12 @@ static void draw_border()
 		wattroff(game.win, COLOR_PAIR(1));
 }
 
-/*
-static void draw_score(struct MenuWin m);
+/* Printeaza scorul curent */
+static void draw_score()
+{
+	mvwprintw(game.win, 0, 0, "LEVEL: %d", score_lvl());
+	mvwprintw(game.win, 0, game.dimx - SCORE_LEN, "SCORE: %d", score_get());
+}
 
-static void draw_menubar(struct MenuWin m);
-*/
+//static void draw_menubar(struct MenuWin m);
 
