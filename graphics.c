@@ -52,7 +52,7 @@ static FILE *f;
 
 /* Antet functii locale/private */
 
-static void destroy_window(WINDOW *w);
+static void destroy_window(WINDOW **w);
 
 static int check_terminal_size(int lenx, int leny);
 
@@ -76,8 +76,8 @@ void gph_init()
 		start_color();
 	}
 
-	destroy_window(game.win);
-	destroy_window(menu.win);
+	destroy_window(&game.win);
+	destroy_window(&menu.win);
 
 
 }
@@ -90,7 +90,7 @@ void gph_drwborder()
 		return;
 	}
 
-	destroy_window(menu.win);
+	destroy_window(&menu.win);
 
 	game.starty = (LINES - CWIN_LENY) / 2;
 	game.startx = (COLS - CWIN_LENX) / 2;
@@ -117,7 +117,7 @@ void gph_drwmenu()
 		return;
 	}
 
-	destroy_window(game.win);
+	destroy_window(&game.win);
 
 	menu.starty = (LINES - MWIN_LENY) / 2;
 	menu.startx = (COLS - MWIN_LENX) / 2;
@@ -322,19 +322,19 @@ int gph_is_onobstacle(struct Unit *u)
 
 void gph_reset()
 {
-	destroy_window(game.win);
-	destroy_window(menu.win);
+	destroy_window(&game.win);
+	destroy_window(&menu.win);
 
 	endwin();
 }
 
-static void destroy_window(WINDOW *w)
+static void destroy_window(WINDOW **w)
 {
-	if (w != NULL) {
-		wclear(w);
-		wrefresh(w);
-		delwin(w);
-		w = NULL;
+	if (*w != NULL) {
+		wclear(*w);
+		wrefresh(*w);
+		delwin(*w);
+		*w = NULL;
 	}
 }
 
