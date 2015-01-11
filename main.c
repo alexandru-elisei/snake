@@ -25,6 +25,8 @@ void error_check(char *msg);
 
 void query_select(int sel, char *key);
 
+void calculate_speed(struct timeval *v);
+
 int main(void)
 {
 	int nfds;
@@ -103,14 +105,7 @@ int main(void)
 
 			FD_SET(0, &read_descriptors);
 
-			viteza.tv_sec = VI_SEC - score_lvl() * VINC_SEC;
-			viteza.tv_usec = VI_USEC - score_lvl() * VINC_USEC;
-
-			if (viteza.tv_sec < VMAX_SEC)
-				viteza.tv_sec = VMAX_SEC;
-
-			if (viteza.tv_usec < VMAX_USEC)
-				viteza.tv_usec = VMAX_USEC;
+			calculate_speed(&viteza);	
 				
 		} else if (flag_has("menu_mode") != 0) {
 			key = gph_getkey();
@@ -150,6 +145,7 @@ int main(void)
 	return 0;
 }
 
+/* Verifica erorile fatale */
 void error_check(char *msg)
 {
 	if (flag_has("fatal_error") != 0) {
@@ -159,10 +155,24 @@ void error_check(char *msg)
 	}
 }
 
+/* Analizeaza rezultatul lui select */
 void query_select(int sel, char *key)
 {
 	if (sel == SELECT_EVENT)
 		*key = gph_getkey();
 	else if (sel == SELECT_ERROR)
 		flag_add("fatal_error", 1);
+}
+
+/* Recalculeaza viteza dupa un eveniment select */
+void calculate_speed(struct timeval *v)
+{
+	v->tv_sec = VI_SEC - score_lvl() * VINC_SEC;
+	v->tv_usec = VI_USEC - score_lvl() * VINC_USEC;
+
+	if (v->tv_sec < VMAX_SEC)
+		v->tv_sec = VMAX_SEC;
+
+	if (v->tv_usec < VMAX_USEC)
+		v->tv_usec = VMAX_USEC;
 }
