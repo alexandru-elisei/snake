@@ -206,6 +206,10 @@ void gph_drwscore()
 
 	mvwprintw(score.win, 5, 2, "(%c) to return to menu", SKEY_RETURN);
 
+	cbreak();
+	noecho();
+	curs_set(FALSE);
+
 	wrefresh(score.win);
 }
 
@@ -278,23 +282,42 @@ int gph_is_quitkey(char key)
 	return 0;
 }
 
-/* Executa o actiune de meniu */
-void gph_menuact(char key)
+/* Executa o actiune inafara modului de joc, astfel daca returneaza 1 intru in
+ * modul de joc, daca returneaza 2 intru in modul showhigh */
+int gph_execute(char key)
 {
-	if (key == MKEY_EASY) {
-		flag_del("hard_difficulty");
-		flag_add("easy_difficulty", 1);
-	} else if (key == MKEY_HARD) {
-		flag_del("easy_difficulty");
-		flag_add("hard_difficulty", 1);
-	} else if (key == MKEY_HIGH) {
-		flag_del("menu_mode");
-		flag_add("showhigh_mode", 1);
+	if (flag_has("menu_mode") != 0) {
+		if (key == MKEY_EASY) {
+			flag_del("hard_difficulty");
+			flag_add("easy_difficulty", 1);
+
+			/* Entering game mode */
+			flag_del("menu_mode");
+			flag_add("game_mode", 1);
+		} else if (key == MKEY_HARD) {
+			flag_del("easy_difficulty");
+			flag_add("hard_difficulty", 1);
+
+			/* Entering game mode */
+			flag_del("menu_mode");
+			flag_add("game_mode", 1);
+		} else if (key == MKEY_HIGH) {
+			flag_del("menu_mode");
+			flag_add("showhigh_mode", 1);
+		}
+
+		return 1;
+	} 
+	
+	if (flag_has("showhigh_mode") != 0) {
+		if (key == SKEY_RETURN) {
+			flag_del("showhigh_mode");
+			flag_add("menu_mode", 1);
+		}
+		return 2;
 	}
 
-	cbreak();
-	noecho();
-	curs_set(FALSE);
+	return 0;
 }
 
 /* Deseneaza un sarpe */
@@ -338,23 +361,11 @@ void gph_draw(struct Unit *snake, int snk_n)
 /* Detects if the snake ate the small food */
 int gph_is_onsmfood(struct Unit *u)
 {
-	/*
-	f = fopen(DEB_FILE, "a");
-	fprintf(f, "\n\ngph_is_onsmfood; u.x = %d, u.y = %d, sf.x = %d, sf.y = %d\n",
-			u->x, u->y, small_food.x, small_food.y);
-	fflush(f);
-	*/
 	if (flag_has("small_food") == 0)
 		return 0;
 
-	//fprintf(f, "%s\n", "I have the small food flag.");
-	//fflush(f);
-
 	if (EQ(*u, small_food) == 1)
 		return 1;
-
-	//fprintf(f, "%s\n", "u is not equal to small_food.");
-	//fflush(f);
 
 	return 0;
 }

@@ -43,6 +43,7 @@ int main(void)
 	error_check("INITIALIZING FLAGS (Not enough memory?)");	
 
 	gph_init();
+	score_init();
 
 	gph_drwmenu();
 	error_check("DRAWING MENU (Terminal too small?)");	
@@ -92,9 +93,7 @@ int main(void)
 				break;
 			}
 
-			if (snk_isdir(key) == 1)
-				snk_addmv(key);
-
+			snk_addmv(key);
 			snk_move();
 			error_check("DRAWING SNAKE (Not enough memory?)");
 
@@ -121,16 +120,24 @@ int main(void)
 			if (gph_is_quitkey(key) == 1)
 				break;
 
-			if (gph_is_menukey(key) == 1) {
-				gph_menuact(key);
-				score_init();
+			/* Intru in game_mode */
+			if (gph_execute(key) == 1) {
 				snk_init();
 				error_check("INITIALIZING SNAKE (Not enough memory?)");	
-
-				/* Entering game mode */
-				flag_del("menu_mode");
-				flag_add("game_mode", 1);
 			}
+		} else if (flag_has("showhigh_mode") != 0) {
+			/*
+			fprintf(f, "entering showhigh mode - before gph_drwscore\n");
+			fflush(f);
+			*/
+			gph_drwscore();
+
+			key = gph_getkey();
+			gph_execute(key);
+			/*
+			fprintf(f, "entering showhigh mode\n");
+			fflush(f);
+			*/
 		}
 
 	}

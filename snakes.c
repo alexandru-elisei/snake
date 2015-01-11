@@ -31,6 +31,11 @@ static void muta_unitate(struct Unit *u, char dir);
 /* Aici trebuie sa inceapa sa se miste sarpele */
 void snk_init()
 {
+	/* Initializing the game_mode */
+	cbreak();
+	noecho();
+	curs_set(FALSE);
+
 	/* La pornirea jocului sarpele se misca pe orizontala spre dreapta */
 	creeaza_sarpe();
 	next_dir = RIGHT;

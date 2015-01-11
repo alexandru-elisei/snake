@@ -51,7 +51,7 @@ int gph_is_menukey(char key);
 int gph_is_quitkey(char key);
 
 /* Executa o actiune de meniu */
-void gph_menuact(char key);
+int gph_execute(char key);
 
 /* Deseneaza un sarpe */
 void gph_draw(struct Unit *snake, int snk_n);
