@@ -93,8 +93,7 @@ int main(void)
 				break;
 			}
 
-			snk_addmv(key);
-			snk_move();
+			snk_move(key);
 			error_check("DRAWING SNAKE (Not enough memory?)");
 
 			if (flag_has("lvlup") != 0) {

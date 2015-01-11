@@ -22,11 +22,14 @@ static FILE *f;
 /******************************************************/
 
 /* Antet functii locale/private */
+
 static void aloca_mem(struct Unit **u, int *mem);
 
 static void creeaza_sarpe();
 
 static void muta_unitate(struct Unit *u, char dir);
+
+static void adauga_directie(char dir);
 
 /* Aici trebuie sa inceapa sa se miste sarpele */
 void snk_init()
@@ -43,30 +46,9 @@ void snk_init()
 	/* Sanity check */
 	flag_del("dead");
 
-	snk_move();
+	snk_move(next_dir);
 }
 
-/* Adaug miscarea ce se va executa la timer */
-void snk_addmv(char dir)
-{
-
-	if (dir == UP && next_dir == DOWN);
-	else if (dir == DOWN && next_dir == UP);
-	else if (dir == LEFT && next_dir == RIGHT);
-	else if (dir == RIGHT && next_dir == LEFT);
-	else if (dir == UP || dir == DOWN || dir == LEFT || dir == RIGHT)
-		next_dir = dir;
-}
-
-
-/* Verifica daca tasta apasata este o directie valida */
-int snk_isdir(char c)
-{
-	if (c == UP || c == DOWN || c == LEFT || c == RIGHT)
-		return 1;
-
-	return 0;
-}
 
 /* Destructor-type function */
 void snk_reset()
@@ -90,14 +72,12 @@ void snk_dead()
 }
 
 /* Genereaza noua pozitie a sarpelui si apoi o deseneaza pe ecran */
-void snk_move()
+void snk_move(char dir)
 {
 	struct Unit poz_viitoare;
 	int i;
 
-	/*********************************/
-	f = fopen(DEB_FILE, "a");
-	/*********************************/
+	adauga_directie(dir);
 
 	if (flag_has("to_grow") == 1) {
 		++snake_len;
@@ -216,3 +196,17 @@ static void muta_unitate(struct Unit *u, char dir)
 			break;
 	}
 }
+
+/* Adaug directia de miscare */
+static void adauga_directie(char dir)
+{
+
+	if (dir == UP && next_dir == DOWN);
+	else if (dir == DOWN && next_dir == UP);
+	else if (dir == LEFT && next_dir == RIGHT);
+	else if (dir == RIGHT && next_dir == LEFT);
+	else if (dir == UP || dir == DOWN || dir == LEFT || dir == RIGHT)
+		next_dir = dir;
+}
+
+

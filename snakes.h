@@ -10,12 +10,6 @@
 /* Construieste sarpele */
 void snk_init();
 
-/* Adaug miscarea ce se va executa la timer */
-void snk_addmv(char dir);
-
-/* Verifica daca tasta apasata este o directie valida */
-int snk_isdir(char c);
-
 /* Destructor-type function */
 void snk_reset();
  
@@ -26,6 +20,6 @@ void snk_dead();
 int snk_is_incolision(struct Unit *u);
 
 /* Misca sarpele */
-void snk_move();
+void snk_move(char dir);
 
 #endif	/* #ifndef SNAKES_H */
