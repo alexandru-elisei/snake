@@ -262,15 +262,7 @@ char gph_getkey()
 
 	return ret;
 } 
-/* Returneaza 1 daca o tasta e tasta valida pentru meniu */
-int gph_is_menukey(char key)
-{
-	key = tolower(key);
-	if (key == MKEY_EASY || key == MKEY_HARD || key == MKEY_HIGH)
-		return 1;
 
-	return 0;
-}
 
 /* Returneaza 1 daca am apasat quit */
 int gph_is_quitkey(char key)
