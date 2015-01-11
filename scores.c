@@ -1,4 +1,5 @@
 #include "scores.h"
+#include "flags.h"
 #include "generic.h"
 
 static int points;	/* scorul curent */
@@ -14,8 +15,15 @@ void score_init()
 /* Creste scorul */
 void score_add(int p)
 {
+	int tmp;
+
 	points += p;
-	level = points / LVL_THRESHOLD;
+	tmp = points / LVL_THRESHOLD;
+
+	if (tmp > level)
+		flag_add("lvlup", 1);
+
+	level = tmp;
 }
 
 /* Returneaza scorul curent */
