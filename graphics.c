@@ -140,6 +140,7 @@ void gph_drwmenu()
 	}
 
 	destroy_window(&game.win);
+	destroy_window(&score.win);
 
 	menu.starty = (LINES - MENU_LENY) / 2;
 	menu.startx = (COLS - MENU_LENX) / 2;
@@ -258,6 +259,8 @@ char gph_getkey()
 		ret = tolower(buffer[0]);
 		getyx(menu.win, y, x);
 		mvwdelch(menu.win, y -1, 0);
+	} else if (flag_has("showhigh_mode") != 0) {
+		ret = tolower(wgetch(score.win));
 	}
 
 	return ret;
@@ -302,11 +305,10 @@ int gph_execute(char key)
 	} 
 	
 	if (flag_has("showhigh_mode") != 0) {
-		if (key == SKEY_RETURN) {
+		if (key == SKEY_RETURN)
 			flag_del("showhigh_mode");
-			flag_add("menu_mode", 1);
-		}
-		return 2;
+
+		return 1;
 	}
 
 	return 0;
