@@ -32,16 +32,25 @@ void score_init()
 	points = 0;
 	level = 0;
 
+	deb = fopen(DEB_FILE, "a");
+
+	fprintf(deb, "score_init - inceput\n");
+	fflush(deb);
+
 	/* Daca fisierul nu exista, il creez */
 	if (deserializeaza() == 0) {
+
+		fprintf(deb, "score_init - deserializeaza = 0\n");
+		fflush(deb);
 
 		high.name = strdup("Darth Sidious");
 		high.score = 0;
 
 		serializeaza();
-	} else {
-		deserializeaza();
 	}
+
+	fprintf(deb, "score_init - sfarsit, high.name = %s, high.score = %d\n", high.name, high.score);
+	fflush(deb);
 }
 
 /* Creste scorul */
@@ -92,8 +101,9 @@ void serializeaza()
 
 	lg_nume = strlen(high.name) + 1;
 	fwrite(&lg_nume, sizeof(int), 1, f);
-	fwrite(&high.name, lg_nume * sizeof(char), 1, f);
+	fwrite(high.name, lg_nume * sizeof(char), 1, f);
 	fwrite(&high.score, sizeof(int), 1, f);
+
 	fclose(f);
 }
 
@@ -104,13 +114,16 @@ int deserializeaza()
 	int lg_nume;
 
 	f = fopen(SCORE_FILE, "rb");
+
 	if (f == NULL)
 		return 0;
 
 	fread(&lg_nume, sizeof(int), 1, f);
 	high.name = (char *) malloc(lg_nume * sizeof(char));
-	fread(&(high.name), lg_nume * sizeof(char), 1, f);
+	fread(high.name, lg_nume * sizeof(char), 1, f);
 	fread(&high.score, sizeof(int), 1, f);
+
+	fclose(f);
 
 	return 1;
 }
