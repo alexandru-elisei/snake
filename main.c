@@ -24,12 +24,16 @@
 
 /* Antet functii */
 
+/* Verifica erorile erorile */
 void error_check(char *msg);
 
+/* Analizeaza rezultatul lui select */
 void query_select(int sel, char *key);
 
+/* Recalculeaza viteza dupa un eveniment select */
 void calculate_speed(struct timeval *v);
 
+/* Obviously */
 void return_to_menu();
 
 int main(void)
@@ -54,6 +58,7 @@ int main(void)
 	gph_init();
 	score_init();
 
+	/* Incep in mod meniu */
 	gph_drwmenu();
 	error_check("DRAWING MENU (Terminal too small?)");	
 	flag_add("menu_mode", 1);
@@ -99,6 +104,7 @@ int main(void)
 					error_check("DURING SELECT");
 				}
 
+				/* Sterg bonusul daca a expirat timpul */
 				if (flag_has("hard_difficulty") != 0 &&
 						(time(NULL) - t) >= BONUS_TIMEOUT &&
 						flag_has("draw_bonus") != 0)
@@ -107,15 +113,10 @@ int main(void)
 				snk_move(key);
 				error_check("DRAWING SNAKE (Not enough memory?)");
 
+				/* Generez bonusul */
 				if (flag_has("lvlup") != 0) {
 					if (flag_has("hard_difficulty") != 0) {
-
-						fprintf(f, "setting bonus\n");
-
 						t = time(NULL);
-						fprintf(f, "t = %d\n", t);
-						fprintf(f, "time(NULL) = %d\n\n", time(NULL));
-						fflush(f);
 						gph_genbonus();
 					}
 					flag_del("lvlup");
@@ -148,16 +149,19 @@ int main(void)
 
 				/* Intru in game_mode */
 				if (flag_has("game_mode") != 0) {
-					score_init();
-					flag_del("small_food");
 					flag_del("obstacles");
+					flag_del("small_food");
+					gph_resetbonus();
 					snk_init();
 					error_check("INITIALIZING SNAKE (Not enough memory?)");	
+					score_init();
 
+					/* Generez bonusul */
 					if (flag_has("hard_difficulty") != 0) {
 						t = time(NULL);
 						gph_genbonus();
 					}
+
 					flag_add("game_mode", 1);
 
 				/* Sau in showhigh_mode */

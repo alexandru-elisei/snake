@@ -6,28 +6,23 @@
 #include "generic.h"
 #include "flags.h"
 
-
 struct Flag {
 	char *name;
 	int value;
 };
-
 
 static struct Flag *flags;	/* vectorul care va retine evenimentele */
 static int n;			/* numarul de elemente din vectorul flags */
 static int memaloc;		/* memoria alocata curent */
 static int fatal_error;		/* pentru exception handling */
 
-/**************************************************************************/
-static FILE *f;
-/**************************************************************************/
-
 /* Antet functii locale/private */
 
+/* Returneaza pozitia unui eveniment */
 static int flag_getpos(char *nm);
 
+/* Aloca memorie pentru vectorul de evenimente */
 static void aloca_mem(struct Flag **f, int *mem);
-
 
 /* Basic constructor-type function */
 void flag_init()
@@ -72,20 +67,6 @@ void flag_add(char *nm, int val)
 	}
 
 	flags[position].value = val;
-
-	/************************************************************/
-	/*
-	f = fopen(DEB_FILE, "a");
-	fprintf(f, "\nflag_add > nm = %s\n", nm);
-	fprintf(f, "\n\nflag_add > flags:\n");
-	for (position = 0; position < n; position++)
-		fprintf(f, "flags[%d].name = %s, .val = %d\n",
-				position,
-				flags[position].name,
-				flags[position].value);
-	fclose(f);
-	*/
-	/************************************************************/
 }
 
 /* Verific daca un eveniment s-a produs, si daca da, returnez valoarea lui
@@ -100,14 +81,6 @@ int flag_has(char *nm)
 		return fatal_error;
 
 	position = flag_getpos(nm);
-
-	/************************************************************/
-	/*
-	f = fopen(DEB_FILE, "a");
-	fprintf(f, "\nflag_has > position for %s = %d\n", nm, position);
-	fclose(f);
-	*/
-	/************************************************************/
 
 	if (position == -1)
 		return 0;

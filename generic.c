@@ -2,11 +2,9 @@
 #include <stdlib.h>
 #include "generic.h"
 
-/*
- * Returneaza 1 in caz de succes, 0 daca s-au citit mai multe caractere
+/* Returneaza 1 in caz de succes, 0 daca s-au citit mai multe caractere
  * decat maxlen si -1 daca nu s-a citit niciun caracter (diferit de newline)
- * newline nu este considerat caracter valid
- */
+ * newline nu este considerat caracter valid */
 int read_string(char **s, 	/* pointer catre sirul de citit */
 		int maxlen,	/* lungimea maxima a sirului */
 	   	FILE *stream)	/* fisierul de unde se citeste */

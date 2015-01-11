@@ -58,24 +58,26 @@ static struct Unit bonus_food;	/* bonusul */
 static struct MenuWin menu;	/* menu window */
 static struct MenuWin score;	/* score window */
 
-/*********************************************/
-static FILE *f;
-/*********************************************/
-
 /* Antet functii locale/private */
 
+/* Deseneaza chenarul */
 static void draw_border();
 
+/* Printeaza scorul curent */
 static void draw_scorebar();
 
+/* Printeaza bara de meniu din timpul jocului */
 static void draw_menubar();
 
 static void destroy_window(WINDOW **w);
 
+/* Verific daca terminalul este indeajuns de mare incat sa desenez pe el */
 static int check_terminal_size(int lenx, int leny);
 
+/* Genereaza mancare, duh */
 static void gen_food(struct Unit *food);
 
+/* Genereaza obstacolele pe ecran */
 static void gen_obstacles(struct Unit *o);	/* pointer de unitati */
 
 /* Basic constructor-type function */
@@ -155,7 +157,7 @@ void gph_drwmenu()
 	mvwprintw(menu.win, 2, 0, "Life has been kind to you. You have your");
 	mvwprintw(menu.win, 3, 0, "own backyard, the mice are plentiful,");
 	mvwprintw(menu.win, 4, 0, "and sometimes, if you are lucky, you");
-	mvwprintw(menu.win, 5, 0, "catch a rabbit. A pink, fluffly rabbit.");
+	mvwprintw(menu.win, 5, 0, "catch a rabbit. A pink, fluffy rabbit.");
 	mvwprintw(menu.win, 6, 0, "A very tasy, pink, fluffy rabbit.");
 
 	mvwprintw(menu.win, 8, 0, "...Until one day. When the pesky, nasty,");
@@ -179,7 +181,7 @@ void gph_drwmenu()
 	wrefresh(menu.win);
 }
 
-/* Deseneaza fereastra in care se arata highscore */
+/* Deseneaza ambele versiune de fereastra pentru highscore */
 void gph_drwscore()
 {
 	char titlu[] = "** HIGH SCORE **";
@@ -204,6 +206,7 @@ void gph_drwscore()
 
 	mvwprintw(score.win, 1, (CHENAR_LENX - strlen(titlu)) / 2, "%s", titlu);
 	
+	/* Desenez fereastra in care afisez highscore */
 	if (flag_has("showhigh_mode") != 0) {
 		mvwprintw(score.win, 3, 2, "%s: %d", score_highname(), score_high()); 
 
@@ -216,6 +219,7 @@ void gph_drwscore()
 		noecho();
 		curs_set(FALSE);
 
+	/* Desenez fereastra in care introduc numele pentru highscore */
 	} else if (flag_has("newhigh_mode") != 0) {
 		if (flag_has("color") != 0) {
 			wattroff(score.win, COLOR_PAIR(10)|A_BOLD);
@@ -273,7 +277,6 @@ char gph_getkey()
 	
 	if (flag_has("game_mode") != 0)
 		ret = tolower(wgetch(game.win));
-
 	else if (flag_has("menu_mode") != 0) {
 		wgetnstr(menu.win, buffer, 1);
 		ret = tolower(buffer[0]);
@@ -282,7 +285,6 @@ char gph_getkey()
 		getyx(menu.win, y, x);
 		mvwdelch(menu.win, y - 1, 0);
 		wrefresh(menu.win);
-
 	} else if (flag_has("showhigh_mode") != 0) {
 		ret = tolower(wgetch(score.win));
 	}
@@ -298,8 +300,6 @@ char *gph_highname()
 	buffer = (char *) malloc((CHENAR_LENX - 4) * sizeof(char));
 	wgetnstr(score.win, buffer, CHENAR_LENX - 5);
 
-	flag_del("newhigh_mode");
-
 	return strdup(buffer);
 }
 
@@ -314,8 +314,7 @@ int gph_is_quitkey(char key)
 	return 0;
 }
 
-/* Executa o actiune inafara modului de joc, astfel daca returneaza 1 intru in
- * modul de joc, daca returneaza 2 intru in modul showhigh */
+/* Executa o actiune inafara modului de joc */
 int gph_execute(char key)
 {
 	if (flag_has("menu_mode") != 0) {
@@ -351,7 +350,7 @@ int gph_execute(char key)
 	return 0;
 }
 
-/* Deseneaza un sarpe */
+/* Deseneaza sarpele */
 void gph_draw(struct Unit *snake, int snk_n)
 {
 	int i;
@@ -401,7 +400,7 @@ void gph_draw(struct Unit *snake, int snk_n)
 	wrefresh(game.win);
 }
 
-/* Creates the bonus food */
+/* Creeaza mancarea bonus */
 void gph_genbonus()
 {
 	gen_food(&bonus_food);
@@ -409,7 +408,7 @@ void gph_genbonus()
 
 }
 
-/* Resets the bonus food */
+/* Sterge mancarea bonus */
 void gph_resetbonus()
 {
 	bonus_food.x = -1;
@@ -418,7 +417,7 @@ void gph_resetbonus()
 	flag_del("draw_bonus");
 }
 
-/* Detects if the snake ate the small food */
+/* Detecteaza daca sarpele a mancat mancarea normala */
 int gph_is_onsmfood(struct Unit *u)
 {
 	if (flag_has("small_food") == 0)
@@ -430,7 +429,7 @@ int gph_is_onsmfood(struct Unit *u)
 	return 0;
 }
 
-/* Detects if the snake ate the bonus food */
+/* Detecteaza daca sarpele a mancat mancarea bonus */
 int gph_is_onbnfood(struct Unit *u)
 {
 	if (EQ(*u, bonus_food) == 1)
@@ -439,8 +438,7 @@ int gph_is_onbnfood(struct Unit *u)
 	return 0;
 }
 
-
-/* Detects if an item bumped into an obstacle */
+/* Detecteaza daca ma suprapun pe un obstacol */
 int gph_is_onobstacle(struct Unit *u)
 {
 	int i;
@@ -461,7 +459,7 @@ int gph_is_onobstacle(struct Unit *u)
 	return 0;
 }
 
-
+/* Destructor? */
 void gph_reset()
 {
 	destroy_window(&game.win);
@@ -470,6 +468,7 @@ void gph_reset()
 	endwin();
 }
 
+/* Duh */
 static void destroy_window(WINDOW **w)
 {
 	if (*w != NULL) {
@@ -480,7 +479,7 @@ static void destroy_window(WINDOW **w)
 	}
 }
 
-/* Genereaza un punct normal pentru sarpe de mancat */
+/* Genereaza mancare, duh */
 static void gen_food(struct Unit *food)
 {
 	do {
@@ -559,7 +558,6 @@ static void gen_obstacles(struct Unit *o)
 /* Verific daca terminalul este indeajuns de mare incat sa desenez pe el */
 static int check_terminal_size(int lenx, int leny)
 {
-
 	/* Ma asigur ca am spatiu sa desenez si bara de scor si de meniu */
 	if (LINES < leny || COLS < lenx)
 		return 0;
@@ -598,6 +596,7 @@ static void draw_scorebar()
 	mvwprintw(game.win, 0, game.dimx - SCORE_LEN, "SCORE: %d", score_get());
 }
 
+/* Printeaza bara de meniu din timpul jocului */
 static void draw_menubar(struct MenuWin m)
 {
 	mvwprintw(game.win, game.dimy - 1, 0, "Q: RETURN TO MENU");

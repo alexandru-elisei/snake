@@ -19,8 +19,7 @@
 
 #define ERROR(msg) printf("\n** FATAL ERROR %s **\n\n", (msg))
 
-/*
- * Propria mea functie de citire a sirurilor de caractere
+/* Propria mea functie de citire a sirurilor de caractere
  * Conform GNU:
  * https://www.gnu.org/software/libc/manual/html_node/Line-Input.html
  *
@@ -28,8 +27,7 @@
  * Returneaza aceleasi valori ca functia getline
  * Daca citirea nu s-a efectuat cu succes, parametrul nu este modificat
  * returneaza 1 in caz de succes, 0 daca s-au citit mai multe caractere
- * si -1 daca nu s-a citit niciun caracter (diferit de newline)
- */
+ * si -1 daca nu s-a citit niciun caracter (diferit de newline) */
 int read_string(char **s, int maxlen, FILE *stream);
 
 #endif 		/* # ifndef GENERIC_H */

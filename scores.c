@@ -22,8 +22,10 @@ FILE *deb;
 
 /* Antet metode private */
 
+/* Salveaza scorul high in fisier */
 void serializeaza();
 
+/* Citeste scorul high din fisier */
 int deserializeaza();
 
 /* Constructor */
@@ -103,7 +105,7 @@ void serializeaza()
 	fclose(f);
 }
 
-
+/* Citeste scorul high din fisier */
 int deserializeaza()
 {
 	FILE *f;

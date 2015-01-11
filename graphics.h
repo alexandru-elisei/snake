@@ -50,25 +50,25 @@ char *gph_highname();
 /* Returneaza 1 daca am apasat quit */
 int gph_is_quitkey(char key);
 
-/* Executa o actiune de meniu */
+/* Executa o actiune inafara modului de joc */
 int gph_execute(char key);
 
 /* Deseneaza un sarpe */
 void gph_draw(struct Unit *snake, int snk_n);
 
-/* Detects if the snake ate the small food */
+/* Detecteaza daca sarpele a mancat mancarea normala */
 int gph_is_onsmfood(struct Unit *u);
 
-/* Detects if the snake ate the bonus food */
+/* Detecteaza daca sarpele a mancat mancarea bonus */
 int gph_is_onbnfood(struct Unit *u);
 
-/* Creates the bonus food */
+/* Creeaza mancarea bonus */
 void gph_genbonus();
 
-/* Resets the bonus food */
+/* Sterge mancarea bonus */
 void gph_resetbonus();
 
-/* Detects if the an item bumped into an obstacle */
+/* Detecteaza daca ma suprapun pe un obstacol */
 int gph_is_onobstacle(struct Unit *u);
 
 #endif		/* ifndef GRAPHICS_H */

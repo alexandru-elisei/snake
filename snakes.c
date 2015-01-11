@@ -17,18 +17,19 @@ static char next_dir;		/* Directia de miscare a sarpelui */
 static int snake_len;		/* lungimea curenta a sarpelui */ 
 static int snake_mem;		/* memoria alocata curent sarpelui */
 
-/******************************************************/
-static FILE *f;
-/******************************************************/
-
 /* Antet functii locale/private */
 
+/* Aloca memorie pentru vectori de tip Unit */
 static void aloca_mem(struct Unit **u, int *mem);
 
+/* Genereaza sarpele de la inceperea jocului
+ * El se misca pe orizontala spre dreapta, incepand cu centrul chenarului */
 static void creeaza_sarpe();
 
+/* Muta un punct in directia indicata */
 static void muta_unitate(struct Unit *u, char dir);
 
+/* Adaug directia de miscare */
 static void adauga_directie(char dir);
 
 /* Aici trebuie sa inceapa sa se miste sarpele */
