@@ -34,7 +34,7 @@
 #define MKEY_HARD	'2'	/* dificultatea meniu grea (man-snake) */
 #define MKEY_QUIT	'q'	/* tasta de iesit din joc */
 #define MKEY_HIGH	's'	/* tasta de vizualizat scorul */
-#define SKEY_RETURN	'r'	/* tasta de iesit din fereastra de scor */
+#define SKEY_RETURN	'q'	/* tasta de iesit din fereastra de scor */
 
 struct MenuWin {		
 	WINDOW *win;		/* fereastra in care se afiseaza meniul */
