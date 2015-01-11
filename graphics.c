@@ -14,9 +14,9 @@
 #define CHENAR_CHX	'+'	/* caracterul pe x pentru chenar */
 #define CHENAR_CHY	'+'	/* caracterul pe y pentru chenar */
 
-/* Do not use values lower than MWIN_LENX = 40, MWIN_LENY = 20 */
+/* Do not use values lower than MWIN_LENX = 40, MWIN_LENY = 21 */
 #define MWIN_LENX	40	/* lungimea pe x a ferestrei de meniu */
-#define MWIN_LENY	20	/* lungimea pe y a ferestrei de meniu */
+#define MWIN_LENY	25	/* lungimea pe y a ferestrei de meniu */
 
 #define SCRBAR_LENY	1	/* inaltimea barei de scor */
 #define MENUBAR_LENY	1	/* inaltimea barei de meniu */
@@ -30,6 +30,7 @@
 #define MKEY_EASY	'1'	/* dificultate meniu usoara (baby-snake) */
 #define MKEY_HARD	'2'	/* dificultatea meniu grea (man-snake) */
 #define MKEY_QUIT	'q'	/* tasta de iesit din joc */
+#define MKEY_HIGH	's'	/* tasta de iesit din joc */
 
 struct MenuWin {		
 	WINDOW *win;		/* fereastra in care se afiseaza meniul */
@@ -158,9 +159,10 @@ void gph_drwmenu()
 	mvwprintw(menu.win, 14, 0, "Choose your game mode:");
 	mvwprintw(menu.win, 15, 0, "(%c) Baby-snake mode.", MKEY_EASY);
 	mvwprintw(menu.win, 16, 0, "(%c) Man-snake mode.", MKEY_HARD);
-	mvwprintw(menu.win, 17, 0, "(%c) to quit game.", MKEY_QUIT);
+	mvwprintw(menu.win, 17, 0, "(%c) to view highscore.", MKEY_HIGH);
+	mvwprintw(menu.win, 18, 0, "(%c) to quit game.", MKEY_QUIT);
 
-	mvwprintw(menu.win, 19, 0, "");
+	mvwprintw(menu.win, 20, 0, "");
 
 	nocbreak();
 	echo();
@@ -205,12 +207,15 @@ char gph_getkey()
 {
 	char ret;
 	char buffer[2];
+	int x, y;
 	
 	if (flag_has("game_mode") != 0)
 		ret = tolower(wgetch(game.win));
 	else if (flag_has("menu_mode") != 0) {
 		wgetnstr(menu.win, buffer, 1);
 		ret = tolower(buffer[0]);
+		getyx(menu.win, y, x);
+		mvwdelch(menu.win, y -1, 0);
 	}
 
 	return ret;
