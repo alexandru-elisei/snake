@@ -178,10 +178,11 @@ void gph_drwmenu()
 	wrefresh(menu.win);
 }
 
-/* Deseneaza fereastra de scor */
+/* Deseneaza fereastra in care se arata highscore */
 void gph_drwscore()
 {
 	char titlu[] = "** HIGH SCORE **";
+	char mesaj[] = "Introduceti numele:";
 	
 	if (check_terminal_size(CHENAR_LENX, SCORE_LENY) == 0) {
 		flag_add("fatal_error", 1);
@@ -193,28 +194,45 @@ void gph_drwscore()
 	score.win = newwin(SCORE_LENY, CHENAR_LENX, score.starty, score.startx);
 
 	wclear(score.win);
+	wborder(score.win, '|', '|', '-', '-', '-', '-', '-', '-');
 
 	if (flag_has("color") != 0) {
-		init_pair(1, COLOR_RED, COLOR_BLACK);
-		wattron(score.win, COLOR_PAIR(1)|A_BOLD);
+		init_pair(10, COLOR_RED, COLOR_BLACK);
+		wattron(score.win, COLOR_PAIR(10)|A_BOLD);
 	}
 
 	mvwprintw(score.win, 1, (CHENAR_LENX - strlen(titlu)) / 2, "%s", titlu);
-	mvwprintw(score.win, 3, 2, "%s: %d", score_highname(), score_high()); 
+	
+	if (flag_has("showhigh_mode") != 0) {
+		mvwprintw(score.win, 3, 2, "%s: %d", score_highname(), score_high()); 
 
-	if (flag_has("color") != 0)
-		wattroff(score.win, COLOR_PAIR(1)|A_BOLD);
+		if (flag_has("color") != 0)
+			wattroff(score.win, COLOR_PAIR(10)|A_BOLD);
 
-	mvwprintw(score.win, 5, 2, "(%c) to return to menu", SKEY_RETURN);
+		mvwprintw(score.win, 5, 2, "(%c) to return to menu", SKEY_RETURN);
 
-	cbreak();
-	noecho();
-	curs_set(FALSE);
+		cbreak();
+		noecho();
+		curs_set(FALSE);
 
+	} else if (flag_has("newhigh_mode") != 0) {
+		if (flag_has("color") != 0) {
+			wattroff(score.win, COLOR_PAIR(10)|A_BOLD);
+		}
+
+		mvwprintw(score.win, 3, (CHENAR_LENX - strlen(mesaj)) / 2,
+				mesaj);
+		wmove(score.win, 5, 2);
+
+		nocbreak();
+		echo();
+		curs_set(TRUE);
+	}
+		
 	wrefresh(score.win);
 }
 
-/* Returneaza 1 daca un punct se afla pe bordaj */
+/* Returneaza 1 daca un punct se afla pe chenar */
 int gph_is_onborder(struct Unit *p)
 {
 	if (p->x == game.chenar_startx ||
@@ -254,17 +272,32 @@ char gph_getkey()
 	
 	if (flag_has("game_mode") != 0)
 		ret = tolower(wgetch(game.win));
+
 	else if (flag_has("menu_mode") != 0) {
 		wgetnstr(menu.win, buffer, 1);
 		ret = tolower(buffer[0]);
 		getyx(menu.win, y, x);
 		mvwdelch(menu.win, y -1, 0);
+
 	} else if (flag_has("showhigh_mode") != 0) {
 		ret = tolower(wgetch(score.win));
 	}
 
 	return ret;
 } 
+
+/* Citeste numele de la highscore */
+char *gph_highname()
+{
+	char *buffer;
+	
+	buffer = (char *) malloc((CHENAR_LENX - 4) * sizeof(char));
+	wgetnstr(score.win, buffer, CHENAR_LENX - 5);
+
+	flag_del("newhigh_mode");
+
+	return strdup(buffer);
+}
 
 
 /* Returneaza 1 daca am apasat quit */

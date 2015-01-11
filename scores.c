@@ -88,6 +88,14 @@ int score_high()
 	return high.score;
 }
 
+/* Salveaza noul highscore */
+void score_addhigh(char *name, int s)
+{
+	high.name = strdup(name);
+	high.score = s;
+	serializeaza();
+}
+
 /* Salveaza scorul high in fisier */
 void serializeaza()
 {

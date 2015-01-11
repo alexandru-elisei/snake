@@ -27,4 +27,7 @@ char *score_highname();
 /* Returneaza valoarea scorului cel mai mare */
 int score_high();
 
+/* Salveaza noul highscore */
+void score_addhigh(char *name, int s);
+
 #endif		/* ifndef SCORES_H */

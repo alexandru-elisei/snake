@@ -26,7 +26,7 @@ void gph_drwgame();
 /* Deseneaza meniul */
 void gph_drwmenu();
 
-/* Deseneaza fereastra de scor */
+/* Deseneaza fereastra in care se arata highscore */
 void gph_drwscore();
 
 /* Returneaza 1 daca un punct se afla pe bordaj */
@@ -41,8 +41,11 @@ void gph_printcenter(char *msg);
 /* Afla pozitia din centrul ferestre */
 void gph_getcenter(int *x, int *y);
 
-/* Citeste o directie */
+/* Citeste o tasta */
 char gph_getkey();
+
+/* Citeste numele la highscore */
+char *gph_highname();
 
 /* Returneaza 1 daca am apasat quit */
 int gph_is_quitkey(char key);

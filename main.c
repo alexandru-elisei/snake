@@ -34,6 +34,7 @@ int main(void)
 	int nfds;
 	int sel;
 	char key;
+	char *high_name;
 	fd_set read_descriptors;
 	struct timeval viteza;
 	FILE *f;
@@ -108,6 +109,7 @@ int main(void)
 					if (score_get() > score_high()) {
 						flag_del("game_mode");
 						flag_add("newhigh_mode", 1);
+						gph_drwscore();
 					} else {
 						gph_getkey();
 						return_to_menu();
@@ -145,6 +147,14 @@ int main(void)
 				error_check("DRAWING MENU (Terminal too small?)");	
 				flag_add("menu_mode", 1);
 			}
+
+		} else if (flag_has("newhigh_mode") != 0) {
+			high_name = gph_highname();
+			score_addhigh(high_name, score_get());
+
+			flag_del("newhigh_mode");
+			score_init();
+			return_to_menu();
 		}
 
 	}
