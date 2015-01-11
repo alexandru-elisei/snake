@@ -20,6 +20,8 @@
 #define VMAX_SEC	0	/* viteza de afisaj maxima (in secunde) */
 #define VMAX_USEC	100000	/* viteza de afisaj maxima (in microsecunde) */
 
+#define BONUS_TIMEOUT	5	/* durata de afisare a bonusului */
+
 /* Antet functii */
 
 void error_check(char *msg);
@@ -97,14 +99,25 @@ int main(void)
 					error_check("DURING SELECT");
 				}
 
-				if ((time(NULL) - t) >= 5 && flag_has("del_bonus") == 0)
-					flag_add("del_bonus", 1);
+				if (flag_has("hard_difficulty") != 0 &&
+						(time(NULL) - t) >= BONUS_TIMEOUT &&
+						flag_has("draw_bonus") != 0)
+					gph_resetbonus();	
 
 				snk_move(key);
 				error_check("DRAWING SNAKE (Not enough memory?)");
 
 				if (flag_has("lvlup") != 0) {
-					t = time(NULL);
+					if (flag_has("hard_difficulty") != 0) {
+
+						fprintf(f, "setting bonus\n");
+
+						t = time(NULL);
+						fprintf(f, "t = %d\n", t);
+						fprintf(f, "time(NULL) = %d\n\n", time(NULL));
+						fflush(f);
+						gph_genbonus();
+					}
 					flag_del("lvlup");
 				}
 
@@ -130,19 +143,26 @@ int main(void)
 			/* Ies din joc */
 			if (gph_is_quitkey(key) == 1)
 				break;
-
+				
 			if (gph_execute(key) == 1) {
 
 				/* Intru in game_mode */
-			       	if (flag_has("game_mode") != 0) {
-				       snk_init();
-				       t = time(NULL);
-				       error_check("INITIALIZING SNAKE (Not enough memory?)");	
-				       flag_add("game_mode", 1);
+				if (flag_has("game_mode") != 0) {
+					score_init();
+					flag_del("small_food");
+					flag_del("obstacles");
+					snk_init();
+					error_check("INITIALIZING SNAKE (Not enough memory?)");	
+
+					if (flag_has("hard_difficulty") != 0) {
+						t = time(NULL);
+						gph_genbonus();
+					}
+					flag_add("game_mode", 1);
 
 				/* Sau in showhigh_mode */
 			    	} else if (flag_has("showhigh_mode") != 0) {
-				       gph_drwscore();
+					gph_drwscore();
 			       	}
 			}
 

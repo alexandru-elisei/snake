@@ -59,6 +59,15 @@ void gph_draw(struct Unit *snake, int snk_n);
 /* Detects if the snake ate the small food */
 int gph_is_onsmfood(struct Unit *u);
 
+/* Detects if the snake ate the bonus food */
+int gph_is_onbnfood(struct Unit *u);
+
+/* Creates the bonus food */
+void gph_genbonus();
+
+/* Resets the bonus food */
+void gph_resetbonus();
+
 /* Detects if the an item bumped into an obstacle */
 int gph_is_onobstacle(struct Unit *u);
 

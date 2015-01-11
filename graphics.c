@@ -8,8 +8,8 @@
 #include "generic.h"
 #include "scores.h"
 
-#define CHENAR_LENX	25	/* lungimea pe x a chenarului */
-#define CHENAR_LENY	20	/* lungimea pe y a chenarului */
+#define CHENAR_LENX	30	/* lungimea pe x a chenarului */
+#define CHENAR_LENY	25	/* lungimea pe y a chenarului */
 
 #define CHENAR_CHX	'+'	/* caracterul pe x pentru chenar */
 #define CHENAR_CHY	'+'	/* caracterul pe y pentru chenar */
@@ -54,7 +54,7 @@ static struct Unit small_food;	/* mancarea cu scorul cel mai mic */
 /* Obstacolele */
 static struct Unit obst1[OBST_LEN],	
 		   obst2[OBST_LEN];
-static struct Unit bonus;	/* bonusul */
+static struct Unit bonus_food;	/* bonusul */
 static struct MenuWin menu;	/* menu window */
 static struct MenuWin score;	/* score window */
 
@@ -74,9 +74,7 @@ static void destroy_window(WINDOW **w);
 
 static int check_terminal_size(int lenx, int leny);
 
-static void gen_small_food(struct Unit *food);
-
-static void gen_bonus_food(struct Unit *food);
+static void gen_food(struct Unit *food);
 
 static void gen_obstacles(struct Unit *o);	/* pointer de unitati */
 
@@ -334,6 +332,7 @@ int gph_execute(char key)
 
 			/* Entering game mode */
 			flag_del("menu_mode");
+			flag_add("game_mode", 1);
 		} else if (key == MKEY_HIGH) {
 			flag_del("menu_mode");
 			flag_add("showhigh_mode", 1);
@@ -366,7 +365,7 @@ void gph_draw(struct Unit *snake, int snk_n)
 	srand(time(NULL));
 
 	if (flag_has("small_food") == 0) {
-		gen_small_food(&small_food);
+		gen_food(&small_food);
 		flag_add("small_food", 1);
 	}
 
@@ -387,22 +386,36 @@ void gph_draw(struct Unit *snake, int snk_n)
 			mvwprintw(game.win, obst2[i].y, obst2[i].x, "%c", '+');
 		}
 
-		if (flag_has("lvlup") != 0) {
-			flag_del("del_bonus");
-			gen_bonus_food(&bonus);
-		}
+		if (flag_has("draw_bonus") != 0) {
+			if (flag_has("color") != 0) {
+				init_pair(30, COLOR_RED, COLOR_BLACK);
+				wattron(game.win, COLOR_PAIR(30));
+			}
+			mvwprintw(game.win, bonus_food.y, bonus_food.x, "%c", '@');
 
-		if (flag_has("del_bonus") == 0) {
-			init_pair(30, COLOR_RED, COLOR_BLACK);
-			wattron(game.win, COLOR_PAIR(30));
-
-			mvwprintw(game.win, bonus.y, bonus.x, "%c", '@');
-
-			wattroff(game.win, COLOR_PAIR(30));
+			if (flag_has("color") != 0)
+				wattroff(game.win, COLOR_PAIR(30));
 		}
 	}
 
 	wrefresh(game.win);
+}
+
+/* Creates the bonus food */
+void gph_genbonus()
+{
+	gen_food(&bonus_food);
+	flag_add("draw_bonus", 1);
+
+}
+
+/* Resets the bonus food */
+void gph_resetbonus()
+{
+	bonus_food.x = -1;
+	bonus_food.y = -1;
+
+	flag_del("draw_bonus");
 }
 
 /* Detects if the snake ate the small food */
@@ -416,6 +429,16 @@ int gph_is_onsmfood(struct Unit *u)
 
 	return 0;
 }
+
+/* Detects if the snake ate the bonus food */
+int gph_is_onbnfood(struct Unit *u)
+{
+	if (EQ(*u, bonus_food) == 1)
+		return 1;
+
+	return 0;
+}
+
 
 /* Detects if an item bumped into an obstacle */
 int gph_is_onobstacle(struct Unit *u)
@@ -458,22 +481,11 @@ static void destroy_window(WINDOW **w)
 }
 
 /* Genereaza un punct normal pentru sarpe de mancat */
-static void gen_small_food(struct Unit *food)
+static void gen_food(struct Unit *food)
 {
 	do {
-		food->x = rand() % (CHENAR_LENX - 2) + 1;
-		food->y = rand() % (CHENAR_LENY - 2) + 1;
-	} while (snk_is_incolision(food) == 1 ||
-			gph_is_onborder(food) == 1 ||
-			gph_is_onobstacle(food) == 1);
-}
-
-/* Genereaza mancare bonus */
-static void gen_bonus_food(struct Unit *food)
-{
-	do {
-		food->x = rand() % (CHENAR_LENX - 2) + 1;
-		food->y = rand() % (CHENAR_LENY - 2) + 1;
+		food->x = rand() % (game.chenar_startx + CHENAR_LENX- 2) + 1;
+		food->y = rand() % (game.chenar_starty + CHENAR_LENY - 2) + 1;
 	} while (snk_is_incolision(food) == 1 ||
 			gph_is_onborder(food) == 1 ||
 			gph_is_onobstacle(food) == 1);

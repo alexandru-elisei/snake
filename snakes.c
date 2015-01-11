@@ -112,6 +112,12 @@ void snk_move(char dir)
 		score_add(POINTS_SMALL);
 	}
 
+	/* Daca sarpele a mancat mancarea mare */
+	if (gph_is_onbnfood(&snake[snake_len - 1]) == 1) {
+		flag_del("draw_bonus");
+		score_add(POINTS_BONUS);
+	}
+
 	gph_draw(snake, snake_len);
 }
 

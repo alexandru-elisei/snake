@@ -7,7 +7,7 @@
 
 #define POINTS_SMALL	10	/* valoarea in puncte a mancarii mici */
 #define POINTS_BONUS	15	/* valoarea in puncte a mancarii mari */
-#define LVL_THRESHOLD	10	/* la cate puncte trec la urmatorul nivel */
+#define LVL_THRESHOLD	20	/* la cate puncte trec la urmatorul nivel */
 
 /* Constructor */
 void score_init();
