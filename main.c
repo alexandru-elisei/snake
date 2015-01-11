@@ -1,4 +1,5 @@
 #include <sys/select.h>
+#include <time.h>
 #include "generic.h"
 #include "flags.h"
 #include "graphics.h"
@@ -38,6 +39,7 @@ int main(void)
 	fd_set read_descriptors;
 	struct timeval viteza;
 	FILE *f;
+	time_t t;
 
 	/* Resetting debug file */
 	f = fopen(DEB_FILE, "w");
@@ -95,11 +97,16 @@ int main(void)
 					error_check("DURING SELECT");
 				}
 
+				if ((time(NULL) - t) >= 5 && flag_has("del_bonus") == 0)
+					flag_add("del_bonus", 1);
+
 				snk_move(key);
 				error_check("DRAWING SNAKE (Not enough memory?)");
 
-				if (flag_has("lvlup") != 0)
+				if (flag_has("lvlup") != 0) {
+					t = time(NULL);
 					flag_del("lvlup");
+				}
 
 				FD_SET(0, &read_descriptors);
 
@@ -129,6 +136,7 @@ int main(void)
 				/* Intru in game_mode */
 			       	if (flag_has("showhigh_mode") == 0) {
 				       snk_init();
+				       t = time(NULL);
 				       error_check("INITIALIZING SNAKE (Not enough memory?)");	
 				       flag_add("game_mode", 1);
 
@@ -154,9 +162,9 @@ int main(void)
 
 			flag_del("newhigh_mode");
 			score_init();
+
 			return_to_menu();
 		}
-
 	}
 
 	gph_reset();

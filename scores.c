@@ -32,17 +32,8 @@ void score_init()
 	points = 0;
 	level = 0;
 
-	deb = fopen(DEB_FILE, "a");
-
-	fprintf(deb, "score_init - inceput\n");
-	fflush(deb);
-
 	/* Daca fisierul nu exista, il creez */
 	if (deserializeaza() == 0) {
-
-		fprintf(deb, "score_init - deserializeaza = 0\n");
-		fflush(deb);
-
 		high.name = strdup("Darth Sidious");
 		high.score = 0;
 

@@ -109,7 +109,6 @@ void snk_move(char dir)
 	if (gph_is_onsmfood(&snake[snake_len - 1]) == 1) {
 		flag_del("small_food");
 		flag_add("to_grow", 1);
-
 		score_add(POINTS_SMALL);
 	}
 

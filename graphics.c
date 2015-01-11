@@ -51,9 +51,10 @@ struct GameWin {
 
 static struct GameWin game;	/* fereastra de joc */
 static struct Unit small_food;	/* mancarea cu scorul cel mai mic */
-static struct Unit obst1[OBST_LEN],	/* obstacolele */
-		   obst2[OBST_LEN];	/* oamenii care incearca sa prinda 
-					 * sarpele */
+/* Obstacolele */
+static struct Unit obst1[OBST_LEN],	
+		   obst2[OBST_LEN];
+static struct Unit bonus;	/* bonusul */
 static struct MenuWin menu;	/* menu window */
 static struct MenuWin score;	/* score window */
 
@@ -74,6 +75,8 @@ static void destroy_window(WINDOW **w);
 static int check_terminal_size(int lenx, int leny);
 
 static void gen_small_food(struct Unit *food);
+
+static void gen_bonus_food(struct Unit *food);
 
 static void gen_obstacles(struct Unit *o);	/* pointer de unitati */
 
@@ -380,6 +383,17 @@ void gph_draw(struct Unit *snake, int snk_n)
 			mvwprintw(game.win, obst1[i].y, obst1[i].x, "%c", '+');
 			mvwprintw(game.win, obst2[i].y, obst2[i].x, "%c", '+');
 		}
+
+		if (flag_has("lvlup") != 0) {
+			flag_del("del_bonus");
+			gen_bonus_food(&bonus);
+		}
+
+		if (flag_has("del_bonus") == 0) {
+			init_pair(30, COLOR_RED, COLOR_BLACK);
+			wattron(game.win, COLOR_PAIR(30));
+			mvwprintw(game.win, bonus.y, bonus.x, "%c", '@');
+		}
 	}
 
 	wrefresh(game.win);
@@ -439,6 +453,17 @@ static void destroy_window(WINDOW **w)
 
 /* Genereaza un punct normal pentru sarpe de mancat */
 static void gen_small_food(struct Unit *food)
+{
+	do {
+		food->x = rand() % (CHENAR_LENX - 2) + 1;
+		food->y = rand() % (CHENAR_LENY - 2) + 1;
+	} while (snk_is_incolision(food) == 1 ||
+			gph_is_onborder(food) == 1 ||
+			gph_is_onobstacle(food) == 1);
+}
+
+/* Genereaza mancare bonus */
+static void gen_bonus_food(struct Unit *food)
 {
 	do {
 		food->x = rand() % (CHENAR_LENX - 2) + 1;
