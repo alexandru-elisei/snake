@@ -6,6 +6,7 @@
 #include "generic.h"
 #include "graphics.h"
 #include "snakes.h"
+#include "scores.h"
 
 #define LENGTH_EASY	 4	/* lungimea initiala la dificultatea easy */
 #define LENGTH_HARD	 8	/* lungimea initiala la dificultatea hard */
@@ -88,6 +89,10 @@ void snk_move()
 	struct Unit poz_viitoare;
 	int i;
 
+	/*********************************/
+	f = fopen(DEB_FILE, "a");
+	/*********************************/
+
 	if (flag_has("to_grow") == 1) {
 		++snake_len;
 		if (snake_len == snake_mem)
@@ -117,6 +122,13 @@ void snk_move()
 	/* Daca sarpele a mancat mancarea mica */
 	if (gph_is_onsmfood(&snake[snake_len - 1]) == 1) {
 		flag_del("small_food");
+		score_add(POINTS_SMALL);
+
+		/*********************************/
+		fprintf(f, "scorul curent - %d\n", score_get());
+		fflush(f);
+		/*********************************/
+
 		flag_add("to_grow", 1);
 	}
 
