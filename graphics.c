@@ -9,6 +9,9 @@
 #define CWIN_LENX	30	/* lungimea pe x a chenarului */
 #define CWIN_LENY	25	/* lungimea pe y a chenarului */
 
+#define CHENAR_CHX	'+'	/* caracterul pe x pentru chenar */
+#define CHENAR_CHY	'+'	/* caracterul pe y pentru chenar */
+
 /* Do not use values lower than MWIN_LENX = 40, MWIN_LENY = 20 */
 #define MWIN_LENX	40	/* lungimea pe x a ferestrei de meniu */
 #define MWIN_LENY	20	/* lungimea pe y a ferestrei de meniu */
@@ -24,19 +27,24 @@
 #define MKEY_HARD	'2'	/* dificultatea meniu grea (man-snake) */
 #define MKEY_QUIT	'q'	/* tasta de iesit din joc */
 
-struct Fereastra {		
-	WINDOW *win;		/* fereastra in care se misca sarpele */
-	int startx;		/* abscisa bordajului */
-	int starty;		/* coordonata bordajului */
+struct MenuWin {		
+	WINDOW *win;		/* fereastra in care se afiseaza meniul */
+	int startx, starty;	/* coordonatele coltului stanga-sus */
 };
 
-static struct Fereastra chenar;	/* chenarul */
+struct GameWin {		
+	WINDOW *win;		/* fereastra in care se desfasoara jocul */
+	int startx, starty;	/* coordonatele coltului stanga-sus */
+	int chenar_startx;	/* coordonatele stanga-sus ale chenarului */
+       	int chenar_starty;	
+};
+
+static struct GameWin game;	/* fereastra de joc */
 static struct Unit small_food;	/* mancarea cu scorul cel mai mic */
 static struct Unit obst1[OBST_LEN],	/* obstacolele */
 		   obst2[OBST_LEN];	/* oamenii care incearca sa prinda 
 					 * sarpele */
-static WINDOW *scrwin;		/* score window */
-static struct Fereastra menu;	/* menu window */
+static struct MenuWin menu;	/* menu window */
 
 /*********************************************/
 static FILE *f;
@@ -44,7 +52,7 @@ static FILE *f;
 
 /* Antet functii locale/private */
 
-static void destroy_window(struct Fereastra *w);
+static void destroy_window(WINDOW *w);
 
 static int check_terminal_size(int lenx, int leny);
 
@@ -68,10 +76,10 @@ void gph_init()
 		start_color();
 	}
 
-	destroy_window(&chenar);
-	destroy_window(&menu);
+	destroy_window(game.win);
+	destroy_window(menu.win);
 
-	scrwin = NULL;
+
 }
 
 /* Deseneaza chenarul in care se poate misca sarpele */
@@ -82,21 +90,21 @@ void gph_drwborder()
 		return;
 	}
 
-	destroy_window(&menu);
+	destroy_window(menu.win);
 
-	chenar.starty = (LINES - CWIN_LENY) / 2;
-	chenar.startx = (COLS - CWIN_LENX) / 2;
-	chenar.win = newwin(CWIN_LENY, CWIN_LENX, chenar.starty, chenar.startx);
+	game.starty = (LINES - CWIN_LENY) / 2;
+	game.startx = (COLS - CWIN_LENX) / 2;
+	game.win = newwin(CWIN_LENY, CWIN_LENX, game.starty, game.startx);
 
 	if (flag_has("color") != 0) {
 		init_pair(1, COLOR_RED, COLOR_YELLOW);
-		wattron(chenar.win, COLOR_PAIR(1));
+		wattron(game.win, COLOR_PAIR(1));
 	}
-	wborder(chenar.win,  '+',  '+', '+', '+', '+', '+', '+', '+');
+	wborder(game.win,  '+',  '+', '+', '+', '+', '+', '+', '+');
 	if (flag_has("color") != 0) 
-		wattroff(chenar.win, COLOR_PAIR(1));
+		wattroff(game.win, COLOR_PAIR(1));
 
-	wrefresh(chenar.win);
+	wrefresh(game.win);
 }
 
 /* Deseneaza meniul */
@@ -109,7 +117,7 @@ void gph_drwmenu()
 		return;
 	}
 
-	destroy_window(&chenar);
+	destroy_window(game.win);
 
 	menu.starty = (LINES - MWIN_LENY) / 2;
 	menu.startx = (COLS - MWIN_LENX) / 2;
@@ -172,8 +180,8 @@ void gph_printcenter(char *msg)
 	gph_getcenter(&startx, &starty);
 	startx = startx - strlen(msg) / 2;
 
-	mvwprintw(chenar.win, starty, startx, "%s", msg);
-	wrefresh(chenar.win);
+	mvwprintw(game.win, starty, startx, "%s", msg);
+	wrefresh(game.win);
 }
 
 /* Citeste o tasta in functie de modul curent */
@@ -183,7 +191,7 @@ char gph_getkey()
 	char buffer[2];
 	
 	if (flag_has("game_mode") != 0)
-		ret = tolower(wgetch(chenar.win));
+		ret = tolower(wgetch(game.win));
 	else if (flag_has("menu_mode") != 0) {
 		wgetnstr(menu.win, buffer, 1);
 		ret = tolower(buffer[0]);
@@ -236,7 +244,7 @@ void gph_draw(struct Unit *snake, int snk_n)
 	gph_drwborder();
 
 	for (i = 0; i < snk_n; i++) {
-		mvwprintw(chenar.win, snake[i].y, snake[i].x, "%c", '*');
+		mvwprintw(game.win, snake[i].y, snake[i].x, "%c", '*');
 	}
 
 	srand(time(NULL));
@@ -246,7 +254,7 @@ void gph_draw(struct Unit *snake, int snk_n)
 		flag_add("small_food", 1);
 	}
 
-	mvwprintw(chenar.win, small_food.y, small_food.x, "%c", '0');
+	mvwprintw(game.win, small_food.y, small_food.x, "%c", '0');
 
 	if (flag_has("hard_difficulty") != 0) {
 		if (flag_has("obstacles") == 0 && flag_has("hard_difficulty") != 0) {
@@ -258,12 +266,12 @@ void gph_draw(struct Unit *snake, int snk_n)
 		}
 
 		for (i = 0; i < OBST_LEN; i++) {
-			mvwprintw(chenar.win, obst1[i].y, obst1[i].x, "%c", '+');
-			mvwprintw(chenar.win, obst2[i].y, obst2[i].x, "%c", '+');
+			mvwprintw(game.win, obst1[i].y, obst1[i].x, "%c", '+');
+			mvwprintw(game.win, obst2[i].y, obst2[i].x, "%c", '+');
 		}
 	}
 
-	wrefresh(chenar.win);
+	wrefresh(game.win);
 }
 
 /* Detects if the snake ate the small food */
@@ -314,22 +322,19 @@ int gph_is_onobstacle(struct Unit *u)
 
 void gph_reset()
 {
-	destroy_window(&chenar);
-	destroy_window(&menu);
+	destroy_window(game.win);
+	destroy_window(menu.win);
 
 	endwin();
 }
 
-static void destroy_window(struct Fereastra *w)
+static void destroy_window(WINDOW *w)
 {
-	if (w->win != NULL) {
-		wclear(w->win);
-		wrefresh(w->win);
-		delwin(w->win);
-		w->win = NULL;
-
-		w->startx = -1;
-		w->starty = -1;
+	if (w != NULL) {
+		wclear(w);
+		wrefresh(w);
+		delwin(w);
+		w = NULL;
 	}
 }
 
