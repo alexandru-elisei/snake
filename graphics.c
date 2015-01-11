@@ -434,8 +434,7 @@ static int check_terminal_size(int lenx, int leny)
 {
 
 	/* Ma asigur ca am spatiu sa desenez si bara de scor si de meniu */
-	if (LINES < leny
-		       	|| COLS < lenx)
+	if (LINES < leny || COLS < lenx)
 		return 0;
 
 	return 1;
