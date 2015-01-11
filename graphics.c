@@ -14,9 +14,9 @@
 #define CHENAR_CHX	'+'	/* caracterul pe x pentru chenar */
 #define CHENAR_CHY	'+'	/* caracterul pe y pentru chenar */
 
-/* Do not use values lower than MWIN_LENX = 40, MWIN_LENY = 21 */
-#define MWIN_LENX	40	/* lungimea pe x a ferestrei de meniu */
-#define MWIN_LENY	25	/* lungimea pe y a ferestrei de meniu */
+/* Do not use values lower than MENU_LENX = 40, MENU_LENY = 21 */
+#define MENU_LENX	40	/* lungimea pe x a ferestrei de meniu */
+#define MENU_LENY	25	/* lungimea pe y a ferestrei de meniu */
 
 #define SCRBAR_LENY	1	/* inaltimea barei de scor */
 #define MENUBAR_LENY	1	/* inaltimea barei de meniu */
@@ -129,18 +129,18 @@ void gph_drwmenu()
 {
 	int centru_x;
 
-	if (check_terminal_size(MWIN_LENX, MWIN_LENY) == 0) {
+	if (check_terminal_size(MENU_LENX, MENU_LENY) == 0) {
 		flag_add("fatal_error", 1);
 		return;
 	}
 
 	destroy_window(&game.win);
 
-	menu.starty = (LINES - MWIN_LENY) / 2;
-	menu.startx = (COLS - MWIN_LENX) / 2;
-	menu.win = newwin(MWIN_LENY, MWIN_LENX, menu.starty, menu.startx);
+	menu.starty = (LINES - MENU_LENY) / 2;
+	menu.startx = (COLS - MENU_LENX) / 2;
+	menu.win = newwin(MENU_LENY, MENU_LENX, menu.starty, menu.startx);
 
-	centru_x = (MWIN_LENX - strlen(TITLU)) / 2;
+	centru_x = (MENU_LENX - strlen(TITLU)) / 2;
 	wattron(menu.win, A_BOLD); 
 	mvwprintw(menu.win, 0, centru_x, "%s\n", TITLU);
 	wattroff(menu.win, A_BOLD);
