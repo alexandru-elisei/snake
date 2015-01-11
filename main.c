@@ -55,7 +55,9 @@ int main(void)
 	while (FOREVER) {
 		
 		if (flag_has("game_mode") != 0) {
-			sel = select(nfds, &read_descriptors, NULL, NULL, &viteza);
+			/* Ascult tastatura */
+			sel = select(nfds, &read_descriptors, NULL, NULL, 
+					&viteza);
 			query_select(sel, &key);
 
 			/* Ies imediat din joc */
@@ -64,10 +66,11 @@ int main(void)
 
 			error_check("DURING SELECT");
 
-			/* Cat timp nu a expirat timpul initial */
+			/* Cat timp nu a expirat timpul */
 			while (sel != SELECT_TIMEOUT) {
-				sel = select(nfds, &read_descriptors, 
-						NULL, NULL, &viteza);
+				/* Ascult tastatura */
+				sel = select(nfds, &read_descriptors, NULL, NULL,
+					       	&viteza);
 				query_select(sel, &key);
 
 				/* Ies imediat din joc */
