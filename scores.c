@@ -8,7 +8,7 @@
 #define SCORE_FILE	"data.bin"
 
 struct HighScore {
-	char *nume;
+	char *name;
 	int score;
 };
 
@@ -35,7 +35,7 @@ void score_init()
 	/* Daca fisierul nu exista, il creez */
 	if (deserializeaza() == 0) {
 
-		high.nume = strdup("Darth Sidious");
+		high.name = strdup("Darth Sidious");
 		high.score = 0;
 
 		serializeaza();
@@ -70,6 +70,18 @@ int score_lvl()
 	return level;
 }
 
+/* Returneaza un pointer catre numele cu scorul cel mai mare */
+char *score_highname()
+{
+	return strdup(high.name);
+}
+
+/* Returneaza valoarea scorului cel mai mare */
+int score_high()
+{
+	return high.score;
+}
+
 /* Salveaza scorul high in fisier */
 void serializeaza()
 {
@@ -78,9 +90,9 @@ void serializeaza()
 
 	f = fopen(SCORE_FILE, "wb");
 
-	lg_nume = strlen(high.nume) + 1;
+	lg_nume = strlen(high.name) + 1;
 	fwrite(&lg_nume, sizeof(int), 1, f);
-	fwrite(&high.nume, lg_nume * sizeof(char), 1, f);
+	fwrite(&high.name, lg_nume * sizeof(char), 1, f);
 	fwrite(&high.score, sizeof(int), 1, f);
 	fclose(f);
 }
@@ -96,8 +108,8 @@ int deserializeaza()
 		return 0;
 
 	fread(&lg_nume, sizeof(int), 1, f);
-	high.nume = (char *) malloc(lg_nume * sizeof(char));
-	fread(&(high.nume), lg_nume * sizeof(char), 1, f);
+	high.name = (char *) malloc(lg_nume * sizeof(char));
+	fread(&(high.name), lg_nume * sizeof(char), 1, f);
 	fread(&high.score, sizeof(int), 1, f);
 
 	return 1;

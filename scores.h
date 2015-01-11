@@ -21,4 +21,10 @@ int score_get();
 /* Returneaza nivelul curent */
 int score_lvl();
 
+/* Returneaza un pointer catre numele cu scorul cel mai mare */
+char *score_highname();
+
+/* Returneaza valoarea scorului cel mai mare */
+int score_high();
+
 #endif		/* ifndef SCORES_H */
