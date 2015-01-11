@@ -122,14 +122,9 @@ void snk_move()
 	/* Daca sarpele a mancat mancarea mica */
 	if (gph_is_onsmfood(&snake[snake_len - 1]) == 1) {
 		flag_del("small_food");
-		score_add(POINTS_SMALL);
-
-		/*********************************/
-		fprintf(f, "scorul curent - %d\n", score_get());
-		fflush(f);
-		/*********************************/
-
 		flag_add("to_grow", 1);
+
+		score_add(POINTS_SMALL);
 	}
 
 	gph_draw(snake, snake_len);
