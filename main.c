@@ -31,12 +31,12 @@ int main(void)
 	f = fopen(DEB_FILE, "a");
 
 	flag_init();
-	error_check("INITIALIZING FLAGS");	
+	error_check("INITIALIZING FLAGS (Not enough memory?)");	
 
 	gph_init();
 
 	gph_drwmenu();
-	error_check("DRAWING MENU");	
+	error_check("DRAWING MENU (Terminal too small?)");	
 	flag_add("menu_mode", 1);
 
 	/* Initializare select */
@@ -58,10 +58,8 @@ int main(void)
 				key = gph_getkey();
 
 				/* Ies imediat din joc */
-				if (gph_is_quitkey(key) == 1) {
-					gph_reset();
+				if (gph_is_quitkey(key) == 1)
 					break;
-				}
 			}
 
 			/* Cat timp nu a expirat timpul initial */
@@ -73,10 +71,8 @@ int main(void)
 					key = gph_getkey();
 
 					/* Ies imediat din joc */
-					if (gph_is_quitkey(key) == 1) {
-						gph_reset();
+					if (gph_is_quitkey(key) == 1)
 						break;
-					}
 				}
 			}
 
@@ -95,20 +91,19 @@ int main(void)
 			viteza.tv_usec = VI_USEC;
 
 			snk_move();
+			error_check("DRAWING SNAKE (Not enough memory?)");
 		} else if (flag_has("menu_mode") != 0) {
 			key = gph_getkey();
 
 			/* Ies din joc */
-			if (gph_is_quitkey(key) == 1) {
-				gph_reset();
+			if (gph_is_quitkey(key) == 1)
 				break;
-			}
 
 			if (gph_is_menukey(key) == 1) {
 				gph_menuact(key);
 				score_init();
 				snk_init();
-				error_check("INITIALIZING SNAKE");	
+				error_check("INITIALIZING SNAKE (Not enough memory?)");	
 
 				/* Entering game mode */
 				flag_del("menu_mode");
