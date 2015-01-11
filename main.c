@@ -8,6 +8,7 @@
 #define SELECT_ERROR	-1	/* eroare la executia functiei select */
 #define SELECT_EVENT	1	/* s-a apasat o tasta */
 #define SELECT_TIMEOUT	0	/* timeout la select */
+#define SELECT_ERROR	-1	/* fatal error */
 
 #define VI_SEC		0	/* viteza initiala, in secunda */
 #define VI_USEC		600000	/* viteza initiala, in microsecunde */
@@ -15,6 +16,8 @@
 /* Antet functii */
 
 void error_check(char *msg);
+
+void query_select(int sel, char *key);
 
 int main(void)
 {
@@ -53,27 +56,25 @@ int main(void)
 		
 		if (flag_has("game_mode") != 0) {
 			sel = select(nfds, &read_descriptors, NULL, NULL, &viteza);
-			/* Citesc tasta pe care am apasat-o */
-			if (sel == SELECT_EVENT) {
-				key = gph_getkey();
+			query_select(sel, &key);
 
-				/* Ies imediat din joc */
-				if (gph_is_quitkey(key) == 1)
-					break;
-			}
+			/* Ies imediat din joc */
+			if (gph_is_quitkey(key) == 1)
+				break;
+
+			error_check("DURING SELECT");
 
 			/* Cat timp nu a expirat timpul initial */
 			while (sel != SELECT_TIMEOUT) {
 				sel = select(nfds, &read_descriptors, 
 						NULL, NULL, &viteza);
-				/* Ascult tastatura */
-				if (sel == SELECT_EVENT) {
-					key = gph_getkey();
+				query_select(sel, &key);
 
-					/* Ies imediat din joc */
-					if (gph_is_quitkey(key) == 1)
-						break;
-				}
+				/* Ies imediat din joc */
+				if (gph_is_quitkey(key) == 1)
+					break;
+
+				error_check("DURING SELECT");
 			}
 
 			if (flag_has("dead") != 0) {
@@ -125,4 +126,12 @@ void error_check(char *msg)
 		ERROR(msg);
 		exit(1);
 	}
+}
+
+void query_select(int sel, char *key)
+{
+	if (sel == SELECT_EVENT)
+		*key = gph_getkey();
+	else if (sel == SELECT_ERROR)
+		flag_add("fatal_error", 1);
 }
