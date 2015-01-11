@@ -17,6 +17,7 @@
 #define MWIN_LENY	20	/* lungimea pe y a ferestrei de meniu */
 
 #define SCRWIN_LENY	1	/* inaltimea ferestrei de scor */
+#define MENUBAR_LENY	1	/* inaltimea barei de meniu */
 
 #define PADDING_HORIZ	1	/* horizontal padding */	
 #define PADDING_VERT	1	/* vertical padding */	
@@ -83,9 +84,14 @@ void gph_init()
 }
 
 /* Deseneaza chenarul in care se poate misca sarpele */
-void gph_drwborder()
+void gph_drwgame()
 {
-	if (check_terminal_size(CWIN_LENX, CWIN_LENY) == 0) {
+	int dimx, dimy;
+	
+	dimx = CWIN_LENX;
+	dimy = CWIN_LENY + SCRWIN_LENY + MENUBAR_LENY;
+	if (check_terminal_size(dimx + 2 * PADDING_HORIZ,
+			       dimy + 2 * PADDING_VERT) == 0) {
 		flag_add("fatal_error", 1);
 		return;
 	}
@@ -241,7 +247,7 @@ void gph_draw(struct Unit *snake, int snk_n)
 {
 	int i;
 
-	gph_drwborder();
+	gph_drwgame();
 
 	for (i = 0; i < snk_n; i++) {
 		mvwprintw(game.win, snake[i].y, snake[i].x, "%c", '*');

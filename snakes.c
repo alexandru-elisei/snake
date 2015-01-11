@@ -79,7 +79,7 @@ void snk_dead()
 {
 	snk_reset();
 	flag_add("dead", 1);
-	gph_drwborder();
+	gph_drwgame();
 	gph_printcenter("** YOU ARE DEAD **");
 }
 

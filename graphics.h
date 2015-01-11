@@ -21,7 +21,7 @@ struct Unit {			/* need better name for a snake segment */
 void gph_init();
 
 /* Deseneaza chenarul in care se poate misca sarpele */
-void gph_drwborder();
+void gph_drwgame();
 
 /* Deseneaza meniul */
 void gph_drwmenu();
