@@ -116,6 +116,7 @@ void gph_drwgame()
 
 	draw_border();	
 	draw_score();
+	draw_menubar();
 
 	wrefresh(game.win);
 }
@@ -471,5 +472,8 @@ static void draw_score()
 	mvwprintw(game.win, 0, game.dimx - SCORE_LEN, "SCORE: %d", score_get());
 }
 
-//static void draw_menubar(struct MenuWin m);
+static void draw_menubar(struct MenuWin m)
+{
+	mvwprintw(game.win, game.dimy - 1, 0, "Q: EXIT GAME");
+}
 
