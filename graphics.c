@@ -6,11 +6,11 @@
 #include "graphics.h"
 #include "generic.h"
 
-#define CWIN_LENX	30	/* lungimea pe x a chenarului */
-#define CWIN_LENY	25	/* lungimea pe y a chenarului */
+#define CHENAR_LENX	30	/* lungimea pe x a chenarului */
+#define CHENAR_LENY	25	/* lungimea pe y a chenarului */
 
 #define CHENAR_CHX	'+'	/* caracterul pe x pentru chenar */
-#define CHENAR_CHY	'+'	/* caracterul pe y pentru chenar */
+#define CHENAR_CHY	'#'	/* caracterul pe y pentru chenar */
 
 /* Do not use values lower than MWIN_LENX = 40, MWIN_LENY = 20 */
 #define MWIN_LENX	40	/* lungimea pe x a ferestrei de meniu */
@@ -36,6 +36,7 @@ struct MenuWin {
 struct GameWin {		
 	WINDOW *win;		/* fereastra in care se desfasoara jocul */
 	int startx, starty;	/* coordonatele coltului stanga-sus */
+	int dimx, dimy;		/* dimensiunile ferestrei */
 	int chenar_startx;	/* coordonatele stanga-sus ale chenarului */
        	int chenar_starty;	
 };
@@ -86,27 +87,48 @@ void gph_init()
 /* Deseneaza chenarul in care se poate misca sarpele */
 void gph_drwgame()
 {
-	int dimx, dimy;
-	
-	dimx = CWIN_LENX;
-	dimy = CWIN_LENY + SCRWIN_LENY + MENUBAR_LENY;
-	if (check_terminal_size(dimx + 2 * PADDING_HORIZ,
-			       dimy + 2 * PADDING_VERT) == 0) {
+	game.dimx = CHENAR_LENX;
+	game.dimy = CHENAR_LENY + SCRWIN_LENY + MENUBAR_LENY;
+
+	if (check_terminal_size(game.dimx + 2 * PADDING_HORIZ,
+			       game.dimy + 2 * PADDING_VERT) == 0) {
 		flag_add("fatal_error", 1);
 		return;
 	}
 
 	destroy_window(&menu.win);
 
-	game.starty = (LINES - CWIN_LENY) / 2;
-	game.startx = (COLS - CWIN_LENX) / 2;
-	game.win = newwin(CWIN_LENY, CWIN_LENX, game.starty, game.startx);
+	game.starty = (LINES - game.dimy) / 2;
+	game.startx = (COLS - game.dimx) / 2;
+	game.win = newwin(game.dimy, game.dimx, game.starty, game.startx);
+
+	game.chenar_startx = 0;
+	/* Las spatiu deasupra chenarului sa scriu scorul */
+	game.chenar_starty = SCRWIN_LENY;
 
 	if (flag_has("color") != 0) {
 		init_pair(1, COLOR_RED, COLOR_YELLOW);
 		wattron(game.win, COLOR_PAIR(1));
 	}
-	wborder(game.win,  '+',  '+', '+', '+', '+', '+', '+', '+');
+
+	f = fopen(DEB_FILE, "a");
+	fprintf(f, "\n\ngame.dimx = %d, game.dimy = %d\n", game.dimx, game.dimy);
+	fprintf(f, "game.startx = %d, game.starty = %d\n", game.startx, game.starty);
+	fprintf(f, "game.chenar_startx = %d, game.chenar_starty = %d\n", game.chenar_startx,
+			game.chenar_starty);
+	fflush(f);
+
+	/* Desenez liniile orizontale */
+	mvwhline(game.win, game.chenar_starty, game.chenar_startx,
+		       	CHENAR_CHX, CHENAR_LENX);
+	mvwhline(game.win, game.chenar_starty + CHENAR_LENY - 1, game.chenar_startx,
+			CHENAR_CHX, CHENAR_LENX);
+	/* Desenez liniile verticale */
+	mvwvline(game.win, game.chenar_starty + 1, game.chenar_startx,
+			CHENAR_CHY, CHENAR_LENY - 2);
+	mvwvline(game.win, game.chenar_starty + 1, game.chenar_startx + CHENAR_LENX - 1,
+			CHENAR_CHY, CHENAR_LENY - 2);
+
 	if (flag_has("color") != 0) 
 		wattroff(game.win, COLOR_PAIR(1));
 
@@ -130,8 +152,7 @@ void gph_drwmenu()
 	menu.win = newwin(MWIN_LENY, MWIN_LENX, menu.starty, menu.startx);
 
 	centru_x = (MWIN_LENX - strlen(TITLU)) / 2;
-	wattron(menu.win, A_BOLD);
-	mvwprintw(menu.win, 0, centru_x, "%s\n", TITLU);
+	wattron(menu.win, A_BOLD); mvwprintw(menu.win, 0, centru_x, "%s\n", TITLU);
 	wattroff(menu.win, A_BOLD);
 
 	mvwprintw(menu.win, 2, 0, "Life has been kind to you. You have your");
@@ -163,9 +184,10 @@ void gph_drwmenu()
 /* Returneaza 1 daca un punct se afla pe bordaj */
 int gph_is_onborder(struct Unit *p)
 {
-	if (p->x == 0 || p->y == 0 ||
-			p->x == (CWIN_LENX - 1) ||
-			p->y == (CWIN_LENY - 1))
+	if (p->x == game.chenar_startx ||
+		      	p->y == game.chenar_starty ||
+			p->x == (game.chenar_startx + CHENAR_LENX - 1) ||
+			p->y == (game.chenar_starty + CHENAR_LENY - 1))
 		return 1;
 
 	return 0;
@@ -174,8 +196,8 @@ int gph_is_onborder(struct Unit *p)
 /* Afla pozitia din centrul ferestrei */
 void gph_getcenter(int *x, int *y)
 {
-	*x = CWIN_LENX / 2;
-	*y = CWIN_LENY / 2;
+	*x = (game.chenar_startx + CHENAR_LENX) / 2;
+	*y = (game.chenar_starty + CHENAR_LENY) / 2;
 }
 
 /* Printeaza un text in mijlocul ecranului */
@@ -348,8 +370,8 @@ static void destroy_window(WINDOW **w)
 static void gen_small_food(struct Unit *food)
 {
 	do {
-		food->x = rand() % (CWIN_LENX - 2) + 1;
-		food->y = rand() % (CWIN_LENY - 2) + 1;
+		food->x = rand() % (CHENAR_LENX - 2) + 1;
+		food->y = rand() % (CHENAR_LENY - 2) + 1;
 	} while (snk_is_incolision(food) == 1 ||
 			gph_is_onborder(food) == 1 ||
 			gph_is_onobstacle(food) == 1);
@@ -371,10 +393,10 @@ static void gen_obstacles(struct Unit *o)
 
 		/* Obstacolul are lungimea de OBST_LEN caractere, cu spatiu in
 		 * mijloc. Daca e orizontal centrul cel mai din stanga are 
-		 * x = 3 si cel mai din dreapta x = CWIN_LENX - 4 */
+		 * x = 3 si cel mai din dreapta x = CHENAR_LENX - 4 */
 		if (obst_oriz == 1) {
-			centru.x = rand() % (CWIN_LENX - OBST_LEN - 2) + OBST_LEN / 2 + 1;
-			centru.y = rand() % (CWIN_LENY - 2) + 1;
+			centru.x = rand() % (CHENAR_LENX - OBST_LEN - 2) + OBST_LEN / 2 + 1;
+			centru.y = rand() % (CHENAR_LENY - 2) + 1;
 
 			for (i = OBST_LEN / 2; i > 0; i--) {
 				o[OBST_LEN / 2 - i].x = centru.x - i;
@@ -387,8 +409,8 @@ static void gen_obstacles(struct Unit *o)
 				o[i].y = centru.y;
 			}
 		} else {
-			centru.x = rand() % (CWIN_LENX - 2) + 1;
-			centru.y = rand() % (CWIN_LENY - OBST_LEN - 2) + OBST_LEN / 2 + 1;
+			centru.x = rand() % (CHENAR_LENX - 2) + 1;
+			centru.y = rand() % (CHENAR_LENY - OBST_LEN - 2) + OBST_LEN / 2 + 1;
 
 			for (i = OBST_LEN / 2; i > 0; i--) {
 				o[OBST_LEN / 2 - i].y = centru.y - i;
