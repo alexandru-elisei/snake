@@ -445,7 +445,7 @@ static int check_terminal_size(int lenx, int leny)
 static void draw_border()
 {
 	if (flag_has("color") != 0) {
-		init_pair(1, COLOR_RED, COLOR_YELLOW);
+		init_pair(1, COLOR_RED, COLOR_CYAN);
 		wattron(game.win, COLOR_PAIR(1));
 	}
 
