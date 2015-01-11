@@ -381,19 +381,27 @@ void gph_draw(struct Unit *snake, int snk_n)
 		}
 
 		for (i = 0; i < OBST_LEN; i++) {
-			mvwprintw(game.win, obst1[i].y, obst1[i].x, "%c", '+');
-			mvwprintw(game.win, obst2[i].y, obst2[i].x, "%c", '+');
-		}
-
-		if (flag_has("draw_bonus") != 0) {
 			if (flag_has("color") != 0) {
 				init_pair(30, COLOR_RED, COLOR_BLACK);
 				wattron(game.win, COLOR_PAIR(30));
 			}
-			mvwprintw(game.win, bonus_food.y, bonus_food.x, "%c", '@');
+
+			mvwprintw(game.win, obst1[i].y, obst1[i].x, "%c", '+');
+			mvwprintw(game.win, obst2[i].y, obst2[i].x, "%c", '+');
 
 			if (flag_has("color") != 0)
 				wattroff(game.win, COLOR_PAIR(30));
+		}
+
+		if (flag_has("draw_bonus") != 0) {
+			if (flag_has("color") != 0) {
+				init_pair(31, COLOR_YELLOW, COLOR_BLACK);
+				wattron(game.win, COLOR_PAIR(31));
+			}
+			mvwprintw(game.win, bonus_food.y, bonus_food.x, "%c", '@');
+
+			if (flag_has("color") != 0)
+				wattroff(game.win, COLOR_PAIR(31));
 		}
 	}
 
