@@ -134,14 +134,14 @@ int main(void)
 			if (gph_execute(key) == 1) {
 
 				/* Intru in game_mode */
-			       	if (flag_has("showhigh_mode") == 0) {
+			       	if (flag_has("game_mode") != 0) {
 				       snk_init();
 				       t = time(NULL);
 				       error_check("INITIALIZING SNAKE (Not enough memory?)");	
 				       flag_add("game_mode", 1);
 
 				/* Sau in showhigh_mode */
-			    	} else {
+			    	} else if (flag_has("showhigh_mode") != 0) {
 				       gph_drwscore();
 			       	}
 			}

@@ -279,8 +279,11 @@ char gph_getkey()
 	else if (flag_has("menu_mode") != 0) {
 		wgetnstr(menu.win, buffer, 1);
 		ret = tolower(buffer[0]);
+
+		/* Sterg caracterul */
 		getyx(menu.win, y, x);
-		mvwdelch(menu.win, y -1, 0);
+		mvwdelch(menu.win, y - 1, 0);
+		wrefresh(menu.win);
 
 	} else if (flag_has("showhigh_mode") != 0) {
 		ret = tolower(wgetch(score.win));
@@ -392,7 +395,10 @@ void gph_draw(struct Unit *snake, int snk_n)
 		if (flag_has("del_bonus") == 0) {
 			init_pair(30, COLOR_RED, COLOR_BLACK);
 			wattron(game.win, COLOR_PAIR(30));
+
 			mvwprintw(game.win, bonus.y, bonus.x, "%c", '@');
+
+			wattroff(game.win, COLOR_PAIR(30));
 		}
 	}
 
