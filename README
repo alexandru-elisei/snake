@@ -11,14 +11,14 @@ Am implementat urmatoarele functionalitati suplimentare:
 1. Am implementat punctaj si nivele. La un anumit punctaj (LVL_THRESHOLD in
 scores.h) se trece la nivelul anterior. Asta presupune marirea vitezei in
 ambele moduri de dificultate, iar in modul hard regenerarea obstacolelor si
-regenerarea mancarii bonus.
+crearea de mancare bonus.
 
 2. Am implementat mancare bonus, care ofera un punctaj mai mare, este generata
 la fiecare nivel nou si dispare dupa un timp specific de variabile
 BONUS_THRESHOLD din main.c
 
 3. Scor maxim. La realizarea unui scor maxim i se cere utilizatorului sa isi
-introduce numele. Numele si scorul este serializat intr-un fisier binar
+introduca numele. Numele si scorul este serializat intr-un fisier binar
 date.bin care este citit la apelarea constructorului obiectului scores.
 
 4. Am creat o mica poveste la inceputul jocului.
@@ -33,7 +33,7 @@ diferiti vectori sau terminalul este prea mic si nu pot fi desenate ferestrele
 jocului.
 
 7. Am preferat ca dimensiunile ferestrelor de joc sa fie fixe si centrate pe
-terminal. Ele se vor redesene centrate chiar daca se schimba dimensiunea
+terminal. Ele se vor redesena centrate chiar daca se schimba dimensiunea
 terminalului. Daca terminalul este mai mic, in main eroarea este prinsa si se
 iese din program cu mesaj de eroare.
 
@@ -43,33 +43,33 @@ REZOLVARE:
 	Pentru realizarea temei am incercat sa simulez comportament de obiecte.
 Astfel in fisierele header am scris functiile pe care eu le-am considerat ca
 fiind metode publice, iar in fisierele .c asociate am scris metodele private,
-declarate ca functii static si atributele obiectele, declarate ca variabile
+declarate ca functii static, si atributele obiectelor, declarate ca variabile
 statice. Numele fisierelor sunt la plural (snakes, scores, etc) pentru ca ele
 reprezinta clasa, iar metodele publice au numele la singular (score_init(), de
-exemplu) pentru ca ele sunt apelate de o instanta (la singular) a clasei:
-clasa scores are instanta score, si deci metoda este score_init.
+exemplu) pentru ca ele sunt apelate de o instanta a clasei: clasa scores are 
+instanta score, si deci metoda este score_init.
 
 	In main.c am coordonat toate obiectele, aici sunt chemate toate
 metodele relevante pentru functionarea jocului.
-	
 	Jocul poate rula in 4 moduri distincte: modul de joc, in care sarpele
 se deplaseaza, modul de meniu, in care se asteapta alegerea unei optiuni,
 modul de vizualizare al scorului maxim si modul de introducere al scorului
 maxim.
 	Sarpele este desenat numai la sfarsitul intervalului specificat in
 main. Daca in acest interval nu a fost apasata nicio tasta de directie el se
-misca in directia precedenta. Altfel, ultima tasta de directie valida apasata
-va dicta directia de deplasare a sarpelui.
+misca in directia precedenta. Daca au fost apasate mai multe taste in interval,
+ultima tasta de directie valida apasata va dicta directia de deplasare a 
+sarpelui.
 
-	Jocul incepe in modul meniu, si in functie de optiune trece intr-unul
-din celelalte moduri prin intermediul starilor transmise de catre flags.
+	Jocul incepe in modul meniu, si in functie de optiuni trece intr-unul
+in celelalte moduri prin intermediul informatiilor transmise de catre flags.
 Atunci cand sarpele moare, sau se creeaza fereastra de introducere a numelui
 in cazul in care s-a facut un scor maxim si apoi se revine in fereastra de
 menu, sau se revine direct.
 
 	Comunicarea intre obiecte se face cu ajutorului clasei flags. Ea este
 folosita pentru a stoca diferite stari (daca sunt in game_mode, in menu_mode,
-daca am generat obstacolele, dificultatea, etc) sau eveniment din timpul
+daca am generat obstacolele, dificultatea, etc) sau evenimente din timpul
 jocului (eroare fatala, de exemplu). Metodele publice permit inspectarea unei
 anumite stari, adaugarea unei stari sau stergerea ei.
 
@@ -81,7 +81,8 @@ cele trei ferestre care sunt folosite pentru modurile jocului (fereastra de
 scor, de joc si de meniu), aici se verifica daca sarpele s-a ciocnit de vreun
 obstacol sau de chenar sau daca a mancat mancarea. Se genereaza doua obstacole
 care sunt compuse dintr-o linie de caractere cu spatiu la mijloc, fie
-orizontale, fie verticale.
+orizontale, fie verticale - cele doua talpi ale oamenilor care incearca sa
+prinda sarpele.
 
 	In snakes am scris functiile necesare pentru miscarea sarpelui, precum
 si functia de detectare a coliziunii cu sarpele, necesare in cadrul graphics

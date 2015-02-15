@@ -140,10 +140,10 @@ int snk_is_incolision(struct Unit *u)		/* pointer catre un element */
 static void aloca_mem(struct Unit **u, int *mem)
 {
 	if (*mem == 0)
-		*u = (struct Unit *) malloc((*mem + MEM_INC) *
+		*u = (struct Unit *)malloc((*mem + MEM_INC) *
 				sizeof(struct Unit));
 	else
-		*u = (struct Unit *) realloc(*u,
+		*u = (struct Unit *)realloc(*u,
 				(*mem + MEM_INC) * sizeof(struct Unit));
 		
 	if (*u == NULL) {
@@ -177,7 +177,6 @@ static void creeaza_sarpe()
 
 	gph_getcenter(&x, &y);
 	x -= 2;
-
 	for (i = 0; i < snake_len; i++) {
 		snake[i].x = x + i;
 		snake[i].y = y;
