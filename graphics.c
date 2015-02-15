@@ -158,7 +158,7 @@ void gph_drwmenu()
 	mvwprintw(menu.win, 3, 0, "own backyard, the mice are plentiful,");
 	mvwprintw(menu.win, 4, 0, "and sometimes, if you are lucky, you");
 	mvwprintw(menu.win, 5, 0, "catch a rabbit. A pink, fluffy rabbit.");
-	mvwprintw(menu.win, 6, 0, "A very tasy, pink, fluffy rabbit.");
+	mvwprintw(menu.win, 6, 0, "A very tasty, pink, fluffy rabbit.");
 
 	mvwprintw(menu.win, 8, 0, "...Until one day. When the pesky, nasty,");
 	mvwprintw(menu.win, 9, 0, "bipedal humans saw you in your yard and");
